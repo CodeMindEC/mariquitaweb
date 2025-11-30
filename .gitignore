@@ -27,3 +27,4 @@ build
 .pnpm-lock.yaml
 
 .medusa
+.turbo
