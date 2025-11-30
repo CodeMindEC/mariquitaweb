@@ -1,0 +1,69 @@
+---
+import Logo_mariquita from "../../assets/header/logo.svg";
+import Carrito from "../../assets/header/carrito.svg";
+import Location from "../../assets/header/icon_location.svg";
+import Oferta from "../../assets/header/oferta.svg";
+---
+
+<header class="w-full border-b border-gray-300">
+    <!-- Header Top -->
+    <div
+        class="flex flex-wrap w-full bg-gray-100 text-gray-600 text-xs sm:text-sm items-center py-1 px-2 sm:px-5"
+    >
+        <div class="flex md:flex-row justify-between items-center w-full pl-5">
+            <!-- Left -->
+            <div class="flex-1">
+                <p class="text-[12px] sm:text-xs md:text-sm">
+                    Snack sano, sabor intenso
+                </p>
+            </div>
+
+            <!-- Right -->
+            <div
+                class="flex-1 flex flex-row sm:justify-end sm:items-center gap-2 sm:gap-4"
+            >
+                <!-- Contact -->
+                <div
+                    class="flex items-center gap-1 sm:gap-2 cursor-pointer transition-transform duration-300 hover:scale-110"
+                >
+                    <Location width={16} height={16} />
+                    <a class="text-[12px] sm:text-xs">Delivery: 0986345616</a>
+                </div>
+
+                <!-- Partition -->
+                <div class="border-l border-gray-600 md:h-4"></div>
+
+                <!-- Offers -->
+                <div
+                    class="flex items-center gap-1 sm:gap-2 cursor-pointer transition-transform duration-300 hover:scale-110"
+                >
+                    <Oferta width={16} height={16} />
+                    <a class="text-[12px] sm:text-xs">Todas las ofertas</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header Bottom -->
+    <div
+        class="flex flex-col md:flex-row w-full items-center px-2 sm:px-5 py-2 gap-2 md:gap-4"
+    >
+        <!-- Logo -->
+        <div class="flex-none">
+            <Logo_mariquita class="w-[300px] h-auto" />
+        </div>
+
+        <!-- Search + Carrito -->
+        <div
+            class="flex-1 flex flex-row md:flex-row items-center sm:justify-end gap-2 md:gap-4 w-full md:p-0 p-2"
+        >
+            <input
+                placeholder="Busca, elige y celebra"
+                class="w-full sm:max-w-[507px] h-10 sm:h-12 rounded-xl border border-gray-500 bg-white text-gray-600 px-3 sm:px-4 text-sm sm:text-base box-border"
+            />
+            <Carrito
+                class="w-10 h-10 cursor-pointer transition-transform duration-300 hover:scale-110"
+            />
+        </div>
+    </div>
+</header>

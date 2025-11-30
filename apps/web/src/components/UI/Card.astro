@@ -1,0 +1,85 @@
+---
+const {
+  image,
+  name,
+  price,
+  oldPrice,
+  offer,
+  imgWidth = "100%",
+  imgHeight = "200px",
+} = Astro.props;
+---
+
+<div
+  class="
+    flex flex-col bg-white rounded-xl shadow-md hover:shadow-lg
+    transition-shadow duration-300 overflow-hidden
+    min-w-[220px] max-w-[260px]
+  "
+>
+  <!-- Imagen -->
+  <div class="relative w-full flex justify-center items-center">
+    {offer && (
+      <div
+        class="
+          absolute top-2 right-2 bg-[#249b3e] text-white text-xs text-center
+          w-[45px] h-[45px] rounded-full
+          flex items-center justify-center font-bold shadow-md
+        "
+      >
+        {offer}
+      </div>
+    )}
+
+    <img
+      src={image}
+      alt={name}
+      class="object-cover w-full"
+      style={`height: ${imgHeight};`}
+    />
+  </div>
+
+  <!-- Contenido -->
+  <div class="p-4 flex flex-col gap-2">
+
+    <!-- Nombre -->
+    <p class="text-[#444] font-semibold text-sm line-clamp-2">
+      {name}
+    </p>
+
+    <!-- Precio -->
+    <div class="flex flex-col">
+      <p class="text-lg font-bold text-[#333]">
+        ${price ? price.toFixed(2) : "0.00"}
+      </p>
+
+      {oldPrice && (
+        <p class="text-xs text-[#999] line-through">
+          ${oldPrice.toFixed(2)}
+        </p>
+      )}
+    </div>
+
+    <!-- Botón -->
+    <button
+      class="
+        mt-2 w-full bg-[#249b3e] text-white py-2 rounded-lg
+        font-semibold text-sm
+        transition-transform duration-300 hover:scale-105
+      "
+    >
+      Comprar ahora - ${price ? price.toFixed(2) : "0.00"}
+    </button>
+
+  </div>
+</div>
+
+<style>
+  /* Para cortar nombre largo */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+  }
+</style>

@@ -1,0 +1,32 @@
+---
+import Header from "../components/UI/Header.astro";
+import Main from "../components/UI/Main.astro";
+---
+
+<!doctype html>
+<html lang="es" class="w-full h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="stylesheet" href="/src/styles/global.css" />
+    <title>Mariquita</title>
+  </head>
+
+  <body
+    class="min-h-screen w-full flex flex-col font-[Inter] overflow-x-hidden"
+  >
+    <!-- Header con sticky sutil -->
+
+    <div
+      class="sticky top-0 z-50 backdrop-blur-sm bg-white/95 shadow-sm transition-shadow duration-300"
+    >
+      <Header />
+      <Main />
+    </div>
+    <main class="flex-1 w-full overflow-x-hidden">
+      <slot />
+    </main>
+  </body>
+</html>

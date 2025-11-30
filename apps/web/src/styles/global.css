@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "InterVar";
+  src: url("/fonts/InterVariable.ttf") format("truetype");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+html, body {
+  font-family: "InterVar", sans-serif;
+}
