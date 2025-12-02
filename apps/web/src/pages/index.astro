@@ -3,41 +3,14 @@ import Layout from "../layouts/Layout.astro";
 import Hero from "../components/UI/Hero.astro";
 import CardSections from "../components/UI/CardSections.astro";
 import Footer from "../components/UI/Footer.astro";
+import { listProducts } from "../lib/medusajs/products";
 
-const products = [
-    {
-        id: 1,
-        name: "Fruto rojo deshidratado",
-        price: 1.5,
-        oldPrice: 3.0,
-        image: "/2.png",
-        offer: "56% OFF",
-    },
-    {
-        id: 2,
-        name: "Naranjas deshidratadas",
-        price: 1.5,
-        oldPrice: 3.0,
-        image: "/2.png",
-        offer: "50% OFF",
-    },
-    {
-        id: 3,
-        name: "Toronjas deshidratadas",
-        price: 1.5,
-        oldPrice: 3.0,
-        image: "/2.png",
-        offer: "40% OFF",
-    },
-    {
-        id: 3,
-        name: "Toronjas deshidratadas",
-        price: 1.5,
-        oldPrice: 3.0,
-        image: "/2.png",
-        offer: "40% OFF",
-    }
-];
+
+const { products, count } = await listProducts({
+    limit: 12,
+    offset: 0,
+
+});
 
 const beers = [
     {
@@ -71,7 +44,7 @@ const beers = [
         oldPrice: 3.0,
         image: "/beer.svg",
         offer: "40% OFF",
-    }
+    },
 ];
 
 const coctels = [
@@ -107,40 +80,17 @@ const coctels = [
         image: "/coctel.svg",
         offer: "40% OFF",
     },
-
 ];
 ---
 
 <Layout class="content">
     <Hero /><!-- Seccion Hero -->
 
-    <CardSections
-        title="Aprovecha la mejor oferta en"
-        focusText="Frutas Deshidratadas"
-        buttonText="Ver todo"
-        width="250px"
-        height="200px"
-        products={products}
-    />
+    <CardSections title="Aprovecha la mejor oferta en" focusText="Frutas Deshidratadas" buttonText="Ver todo" width="250px" height="200px" products={products} />
 
-    <CardSections
-        title="PRODUCTOS"
-        focusText="LA TASCA"
-        focusColor="#F6C938"
-        buttonText="Ver todo"
-   
-        products={beers}
-    />
+    <CardSections title="PRODUCTOS" focusText="LA TASCA" focusColor="#F6C938" buttonText="Ver todo" products={products} />
 
-    <CardSections
-        title="VIVE LA EXPERIENCIA DE BARRA MOVIL BY"
-        focusText="LA TASCA"
-        buttonText="Ver todo"
-        focusColor="#F6C938"
-        width="100%"
-        height="200px"
-        products={coctels}
-    />
+    <CardSections title="VIVE LA EXPERIENCIA DE BARRA MOVIL BY" focusText="LA TASCA" buttonText="Ver todo" focusColor="#F6C938" width="100%" height="200px" products={products} />
 
     <Footer />
 </Layout>

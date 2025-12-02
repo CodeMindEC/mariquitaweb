@@ -1,85 +1,129 @@
 ---
-const {
-  image,
-  name,
-  price,
-  oldPrice,
-  offer,
-  imgWidth = "100%",
-  imgHeight = "200px",
-} = Astro.props;
+import type { HttpTypes } from "@medusajs/types";
+
+export type StoreProduct = HttpTypes.StoreProduct;
+
+type Props = {
+    product: StoreProduct;
+    imgWidth?: string;
+    imgHeight?: string;
+};
+
+const { product, imgWidth = "100%", imgHeight = "200px" } = Astro.props as Props;
+
+// 1. Tomamos la primera variante como principal
+const firstVariant = product.variants?.[0] ?? null;
+
+// Definimos el shape mínimo que nos importa del price set
+interface VariantCalculatedPrice {
+    calculated_amount?: number | null;
+    calculated_amount_with_tax?: number | null;
+    original_amount?: number | null;
+    original_amount_with_tax?: number | null;
+    calculated_price?: {
+        price_list_type?: string | null;
+    } | null;
+}
+
+const priceSet = firstVariant?.calculated_price as VariantCalculatedPrice | null | undefined;
+
+// 2. Vemos si tenemos montos "con impuestos"
+const hasTaxAmounts = (priceSet?.calculated_amount_with_tax ?? null) !== null || (priceSet?.original_amount_with_tax ?? null) !== null;
+
+// Elegimos si usar precios con impuesto o sin impuesto
+const calculatedAmount = hasTaxAmounts ? (priceSet?.calculated_amount_with_tax ?? null) : (priceSet?.calculated_amount ?? null);
+
+const originalAmount = hasTaxAmounts ? (priceSet?.original_amount_with_tax ?? null) : (priceSet?.original_amount ?? null);
+
+// Flag para saber si el precio mostrado YA incluye IVA/impuestos
+const priceIncludesTax = hasTaxAmounts && calculatedAmount != null;
+
+// 3. Tipo de precio según la price list
+const priceListType = priceSet?.calculated_price?.price_list_type ?? null;
+const isSale = priceListType === "sale"; // viene de price list de tipo "sale"
+
+// 4. Definimos el precio principal y el precio antiguo (solo si tiene sentido)
+let price: number = 0;
+let oldPrice: number | null = null;
+let offer: string | null = null;
+
+if (calculatedAmount != null) {
+    price = calculatedAmount;
+} else if (originalAmount != null) {
+    // fallback: no hay calculated, usamos original
+    price = originalAmount;
+}
+
+// Solo consideramos "old price" si es SALE y realmente hay diferencia
+if (isSale && calculatedAmount != null && originalAmount != null && originalAmount > calculatedAmount) {
+    oldPrice = originalAmount;
+    const pct = Math.round(((originalAmount - calculatedAmount) / originalAmount) * 100);
+    offer = `-${pct}%`;
+}
+
+// 5. Imagen y nombre
+const image = product.thumbnail ?? product.images?.[0]?.url ?? "/images/placeholder-product.jpg";
+
+const name = product.title ?? "Producto sin nombre";
+
+// 6. Helper para formatear
+const format = (value: number | null) => (typeof value === "number" ? value.toFixed(2) : "0.00");
 ---
 
-<div
-  class="
-    flex flex-col bg-white rounded-xl shadow-md hover:shadow-lg
+<div class="flex flex-col bg-white rounded-xl shadow-md hover:shadow-lg
     transition-shadow duration-300 overflow-hidden
-    min-w-[220px] max-w-[260px]
-  "
->
-  <!-- Imagen -->
-  <div class="relative w-full flex justify-center items-center">
-    {offer && (
-      <div
-        class="
+    min-w-[220px] max-w-[260px]">
+    <!-- Imagen -->
+    <div class="relative w-full flex justify-center items-center" style={`width: ${imgWidth};`}>
+        {
+            offer && (
+                <div
+                    class="
           absolute top-2 right-2 bg-[#249b3e] text-white text-xs text-center
           w-[45px] h-[45px] rounded-full
           flex items-center justify-center font-bold shadow-md
         "
-      >
-        {offer}
-      </div>
-    )}
+                >
+                    {offer}
+                </div>
+            )
+        }
 
-    <img
-      src={image}
-      alt={name}
-      class="object-cover w-full"
-      style={`height: ${imgHeight};`}
-    />
-  </div>
-
-  <!-- Contenido -->
-  <div class="p-4 flex flex-col gap-2">
-
-    <!-- Nombre -->
-    <p class="text-[#444] font-semibold text-sm line-clamp-2">
-      {name}
-    </p>
-
-    <!-- Precio -->
-    <div class="flex flex-col">
-      <p class="text-lg font-bold text-[#333]">
-        ${price ? price.toFixed(2) : "0.00"}
-      </p>
-
-      {oldPrice && (
-        <p class="text-xs text-[#999] line-through">
-          ${oldPrice.toFixed(2)}
-        </p>
-      )}
+        <img src={image} alt={name} class="object-cover w-full" style={`height: ${imgHeight};`} />
     </div>
 
-    <!-- Botón -->
-    <button
-      class="
-        mt-2 w-full bg-[#249b3e] text-white py-2 rounded-lg
-        font-semibold text-sm
-        transition-transform duration-300 hover:scale-105
-      "
-    >
-      Comprar ahora - ${price ? price.toFixed(2) : "0.00"}
-    </button>
+    <!-- Contenido -->
+    <div class="p-4 flex flex-col gap-2">
+        <!-- Nombre -->
+        <p class="text-[#444] font-semibold text-sm line-clamp-2">
+            {name}
+        </p>
 
-  </div>
+        <!-- Precio -->
+        <div class="flex flex-col">
+            <p class="text-lg font-bold text-[#333]">
+                ${format(price)}
+            </p>
+
+            {oldPrice !== null && <p class="text-xs text-[#999] line-through">${format(oldPrice)}</p>}
+
+            {priceIncludesTax && <p class="text-[11px] text-[#777] mt-1">Precio incluye IVA</p>}
+        </div>
+
+        <!-- Botón -->
+        <button class="mt-2 w-full bg-[#249b3e] text-white py-2 rounded-lg
+        font-semibold text-sm
+        transition-transform duration-300 hover:scale-105">
+            Comprar ahora - ${format(price)}
+        </button>
+    </div>
 </div>
 
 <style>
-  /* Para cortar nombre largo */
-  .line-clamp-2 {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    -webkit-line-clamp: 2;
-  }
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        -webkit-line-clamp: 2;
+    }
 </style>

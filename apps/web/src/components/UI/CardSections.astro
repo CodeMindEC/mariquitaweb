@@ -1,298 +1,262 @@
 ---
 import Card from "../../components/UI/Card.astro";
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  oldPrice?: number;
-  image: string;
-  offer?: string;
-}
-
+import { type StoreProduct } from "../../lib/medusajs/products";
 interface Props {
-  title?: string;
-  focusText?: string;
-  buttonText?: string;
-  products?: Product[];
-  focusColor?: string;
-  width?: string;
-  height?: string;
+    title?: string;
+    focusText?: string;
+    buttonText?: string;
+    products?: StoreProduct[];
+    focusColor?: string;
+    width?: string;
+    height?: string;
 }
 
-const {
-  title,
-  focusText,
-  buttonText,
-  products = [],
-  focusColor = "#299037",
-  width,
-  height,
-} = Astro.props;
+const { title, focusText, buttonText, products = [], focusColor = "#299037" } = Astro.props;
 ---
 
 <section class="card-section">
-  <div class="card-section__header">
-    <h2 class="card-section__title">
-      {title}
-      <span style={`color: ${focusColor}`}>{focusText}</span>
-    </h2>
-    {
-      buttonText && (
-        <a href="#" class="card-section__button">
-          {buttonText}
-        </a>
-      )
-    }
-  </div>
-
-  <div class="card-section__container">
-    <div class="card-section__slider">
-      {
-        products.map((p) => (
-          <div class="card-section__item">
-            <Card
-              id={p.id}
-              name={p.name}
-              price={p.price}
-              oldPrice={p.oldPrice}
-              image={p.image}
-              offer={p.offer}
-              width={width}
-              height={height}
-            />
-          </div>
-        ))
-      }
+    <div class="card-section__header">
+        <h2 class="card-section__title">
+            {title}
+            <span style={`color: ${focusColor}`}>{focusText}</span>
+        </h2>
+        {
+            buttonText && (
+                <a href="#" class="card-section__button">
+                    {buttonText}
+                </a>
+            )
+        }
     </div>
-  </div>
 
-  <div class="card-section__dots"></div>
+    <div class="card-section__container">
+        <div class="card-section__slider">
+            {products.map((p) => <Card product={p} />)}
+        </div>
+    </div>
+
+    <div class="card-section__dots"></div>
 </section>
 
 <style>
-  .card-section {
-    width: 100%;
-    padding: 3rem;
-  }
-
-  .card-section__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-
-  .card-section__title {
-    font-size: 1.8rem;
-    font-weight: bold;
-    margin: 0;
-  }
-
-  .card-section__button {
-    padding: 0.6rem 1.5rem;
-    background-color: #299037;
-    color: white;
-    text-decoration: none;
-    border-radius: 0.5rem;
-    font-weight: 500;
-    transition: background-color 0.3s ease;
-  }
-
-  .card-section__button:hover {
-    background-color: #207028;
-  }
-
-  .card-section__container {
-    position: relative;
-    width: 100%;
-  }
-
-  .card-section__slider {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .card-section__item {
-    width: 100%;
-  }
-
-  .card-section__dots {
-    display: none;
-  }
-
-  /* Estilos para mobile - Slider */
-  @media (max-width: 768px) {
     .card-section {
-      padding: 2rem 1rem;
-      margin-bottom: 1.5rem;
-      background: linear-gradient(to bottom, #f9fafb 0%, #ffffff 100%);
-      border-radius: 1rem;
-      box-shadow:
-        0 2px 8px rgba(0, 0, 0, 0.04),
-        0 1px 3px rgba(0, 0, 0, 0.06);
+        width: 100%;
+        padding: 3rem;
     }
 
-    .card-section:last-of-type {
-      margin-bottom: 0;
-    }
-
-    .card-section__container {
-      overflow: hidden;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .card-section__slider {
-      display: flex;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      gap: 1rem;
-      padding: 0.5rem 0;
-      scrollbar-width: none; /* Firefox */
-      -ms-overflow-style: none; /* IE/Edge */
-    }
-
-    .card-section__slider::-webkit-scrollbar {
-      display: none; /* Chrome/Safari */
-    }
-
-    .card-section__item {
-      flex: 0 0 85%;
-      scroll-snap-align: start;
-      scroll-snap-stop: always;
-    }
-
-    .card-section__dots {
-      display: flex;
-      justify-content: center;
-      gap: 0.5rem;
-      margin-top: 1rem;
-      padding: 0.5rem 0;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .card-section__item {
-      flex: 0 0 90%;
+    .card-section__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
     }
 
     .card-section__title {
-      font-size: 1.5rem;
+        font-size: 1.8rem;
+        font-weight: bold;
+        margin: 0;
     }
-  }
+
+    .card-section__button {
+        padding: 0.6rem 1.5rem;
+        background-color: #299037;
+        color: white;
+        text-decoration: none;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
+    }
+
+    .card-section__button:hover {
+        background-color: #207028;
+    }
+
+    .card-section__container {
+        position: relative;
+        width: 100%;
+    }
+
+    .card-section__slider {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .card-section__item {
+        width: 100%;
+    }
+
+    .card-section__dots {
+        display: none;
+    }
+
+    /* Estilos para mobile - Slider */
+    @media (max-width: 768px) {
+        .card-section {
+            padding: 2rem 1rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to bottom, #f9fafb 0%, #ffffff 100%);
+            border-radius: 1rem;
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.04),
+                0 1px 3px rgba(0, 0, 0, 0.06);
+        }
+
+        .card-section:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .card-section__container {
+            overflow: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .card-section__slider {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: 1rem;
+            padding: 0.5rem 0;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
+        }
+
+        .card-section__slider::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
+
+        .card-section__item {
+            flex: 0 0 85%;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+        }
+
+        .card-section__dots {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding: 0.5rem 0;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .card-section__item {
+            flex: 0 0 90%;
+        }
+
+        .card-section__title {
+            font-size: 1.5rem;
+        }
+    }
 </style>
 
 <script>
-  // Script para manejar los indicadores del slider en mobile
-  function initSlider() {
-    const containers = document.querySelectorAll(".card-section__container");
+    // Script para manejar los indicadores del slider en mobile
+    function initSlider() {
+        const containers = document.querySelectorAll(".card-section__container");
 
-    containers.forEach((container) => {
-      const slider = container.querySelector(
-        ".card-section__slider",
-      ) as HTMLElement;
-      const dotsContainer = container.parentElement?.querySelector(
-        ".card-section__dots",
-      ) as HTMLElement;
-      const items = slider.querySelectorAll(".card-section__item");
+        containers.forEach((container) => {
+            const slider = container.querySelector(".card-section__slider") as HTMLElement;
+            const dotsContainer = container.parentElement?.querySelector(".card-section__dots") as HTMLElement;
+            const items = slider.querySelectorAll(".card-section__item");
 
-      if (!slider || !dotsContainer || items.length === 0) return;
+            if (!slider || !dotsContainer || items.length === 0) return;
 
-      // Solo activar en mobile
-      function isMobile() {
-        return window.innerWidth <= 768;
-      }
+            // Solo activar en mobile
+            function isMobile() {
+                return window.innerWidth <= 768;
+            }
 
-      // Crear dots
-      function createDots() {
-        if (!isMobile()) {
-          dotsContainer.innerHTML = "";
-          return;
-        }
+            // Crear dots
+            function createDots() {
+                if (!isMobile()) {
+                    dotsContainer.innerHTML = "";
+                    return;
+                }
 
-        dotsContainer.innerHTML = "";
-        items.forEach((_, index) => {
-          const dot = document.createElement("button");
-          dot.className = "slider-dot";
-          dot.setAttribute("aria-label", `Ir al producto ${index + 1}`);
-          dot.addEventListener("click", () => scrollToItem(index));
-          dotsContainer.appendChild(dot);
+                dotsContainer.innerHTML = "";
+                items.forEach((_, index) => {
+                    const dot = document.createElement("button");
+                    dot.className = "slider-dot";
+                    dot.setAttribute("aria-label", `Ir al producto ${index + 1}`);
+                    dot.addEventListener("click", () => scrollToItem(index));
+                    dotsContainer.appendChild(dot);
+                });
+                updateActiveDot();
+            }
+
+            // Scroll a un item específico
+            function scrollToItem(index: number) {
+                const item = items[index] as HTMLElement;
+                if (item) {
+                    slider.scrollTo({
+                        left: item.offsetLeft - slider.offsetLeft,
+                        behavior: "smooth",
+                    });
+                }
+            }
+
+            // Actualizar dot activo
+            function updateActiveDot() {
+                if (!isMobile()) return;
+
+                const dots = dotsContainer.querySelectorAll(".slider-dot");
+                const scrollLeft = slider.scrollLeft;
+                const itemWidth = (items[0] as HTMLElement).offsetWidth;
+                const gap = 16; // 1rem en px
+                const currentIndex = Math.round(scrollLeft / (itemWidth + gap));
+
+                dots.forEach((dot, index) => {
+                    dot.classList.toggle("active", index === currentIndex);
+                });
+            }
+
+            // Event listeners
+            slider.addEventListener("scroll", updateActiveDot);
+            window.addEventListener("resize", () => {
+                createDots();
+                updateActiveDot();
+            });
+
+            // Inicializar
+            createDots();
         });
-        updateActiveDot();
-      }
+    }
 
-      // Scroll a un item específico
-      function scrollToItem(index: number) {
-        const item = items[index] as HTMLElement;
-        if (item) {
-          slider.scrollTo({
-            left: item.offsetLeft - slider.offsetLeft,
-            behavior: "smooth",
-          });
-        }
-      }
-
-      // Actualizar dot activo
-      function updateActiveDot() {
-        if (!isMobile()) return;
-
-        const dots = dotsContainer.querySelectorAll(".slider-dot");
-        const scrollLeft = slider.scrollLeft;
-        const itemWidth = (items[0] as HTMLElement).offsetWidth;
-        const gap = 16; // 1rem en px
-        const currentIndex = Math.round(scrollLeft / (itemWidth + gap));
-
-        dots.forEach((dot, index) => {
-          dot.classList.toggle("active", index === currentIndex);
-        });
-      }
-
-      // Event listeners
-      slider.addEventListener("scroll", updateActiveDot);
-      window.addEventListener("resize", () => {
-        createDots();
-        updateActiveDot();
-      });
-
-      // Inicializar
-      createDots();
-    });
-  }
-
-  // Ejecutar cuando el DOM esté listo
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initSlider);
-  } else {
-    initSlider();
-  }
+    // Ejecutar cuando el DOM esté listo
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initSlider);
+    } else {
+        initSlider();
+    }
 </script>
 
 <style is:global>
-  .slider-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: #d1d5db;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
+    .slider-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #d1d5db;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
 
-  .slider-dot.active {
-    background-color: #299037;
-    width: 24px;
-    border-radius: 4px;
-  }
+    .slider-dot.active {
+        background-color: #299037;
+        width: 24px;
+        border-radius: 4px;
+    }
 
-  .slider-dot:hover {
-    background-color: #9ca3af;
-  }
+    .slider-dot:hover {
+        background-color: #9ca3af;
+    }
 
-  .slider-dot.active:hover {
-    background-color: #207028;
-  }
+    .slider-dot.active:hover {
+        background-color: #207028;
+    }
 </style>
