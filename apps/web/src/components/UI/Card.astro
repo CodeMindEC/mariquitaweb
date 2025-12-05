@@ -12,7 +12,34 @@ type Props = {
 const { product, imgWidth = "100%", imgHeight = "200px" } = Astro.props as Props;
 
 // 1. Tomamos la primera variante como principal
-const firstVariant = product.variants?.[0] ?? null;
+const variants = product.variants;
+
+//variante con el precio mas bajo
+const lowestPriceVariant = variants?.reduce((lowest, variant) => {
+    const variantPriceSet = variant.calculated_price as VariantCalculatedPrice;
+    const variantCalculatedAmount = variantPriceSet?.calculated_amount ?? null;
+
+    if (variantCalculatedAmount === null) {
+        return lowest;
+    }
+
+    if (lowest === null) {
+        return variant;
+    }
+
+    const lowestPriceSet = lowest.calculated_price as VariantCalculatedPrice;
+    const lowestCalculatedAmount = lowestPriceSet?.calculated_amount ?? null;
+
+    if (lowestCalculatedAmount === null || variantCalculatedAmount < lowestCalculatedAmount) {
+        return variant;
+    }
+
+    return lowest;
+});
+
+const featuredVariant = lowestPriceVariant;
+
+console.log(lowestPriceVariant);
 
 // Definimos el shape mínimo que nos importa del price set
 interface VariantCalculatedPrice {
@@ -25,7 +52,7 @@ interface VariantCalculatedPrice {
     } | null;
 }
 
-const priceSet = firstVariant?.calculated_price as VariantCalculatedPrice | null | undefined;
+const priceSet = featuredVariant?.calculated_price as VariantCalculatedPrice | null | undefined;
 
 // 2. Vemos si tenemos montos "con impuestos"
 const hasTaxAmounts = (priceSet?.calculated_amount_with_tax ?? null) !== null || (priceSet?.original_amount_with_tax ?? null) !== null;
