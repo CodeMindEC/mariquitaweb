@@ -3,7 +3,7 @@ import izq from "../../assets/Carousel/arrowizq.svg";
 import der from "../../assets/Carousel/arrowder.svg";
 
 interface Slide {
-  fondo: string;
+  backgroundClass: string;
   titulo: string;
   subtitulo: string;
   promo: string;
@@ -11,13 +11,13 @@ interface Slide {
 
 const slidesData: Slide[] = [
   {
-    fondo: "/2.png",
+    backgroundClass: "carousel-bg-frutos",
     titulo: "SABOR ÚNICO.",
     subtitulo: "Lo mejor en vinos y licores",
     promo: "Hasta 50% OFF",
   },
   {
-    fondo: "/3.png",
+    backgroundClass: "carousel-bg-novedades",
     titulo: "Descubre nuestras novedades",
     subtitulo: "Nuevas experiencias en cada compra",
     promo: "",
@@ -40,9 +40,8 @@ export default function Carousel() {
 
   return (
     <div
-      className="relative w-[95%] md:w-[90%] min-h-[30vh] md:min-h-[35vh] mt-4 rounded-xl flex
-        bg-cover bg-center transition-all duration-500 overflow-visible"
-      style={{ backgroundImage: `url(${slide.fondo})` }}
+      className={`relative w-[95%] md:w-[90%] min-h-[30vh] md:min-h-[35vh] mt-4 rounded-xl flex
+        bg-cover bg-center transition-all duration-500 overflow-visible ${slide.backgroundClass}`}
     >
       {/* overlay */}
       <div className="absolute inset-0 bg-black/40 rounded-xl" />

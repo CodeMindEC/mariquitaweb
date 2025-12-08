@@ -1,0 +1,54 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Footer from "../components/UI/Footer.astro";
+import Container from "../components/UI/Container.tsx";
+import { listProductCategories, listProducts, listCollections } from "../lib/medusajs/products";
+
+const url = new URL(Astro.request.url);
+
+const getIdList = (...keys: (string | null | undefined)[]) =>
+    keys
+        .filter(Boolean)
+        .flatMap((key) => url.searchParams.getAll(key as string))
+        .flatMap((value) => value.split(","))
+        .map((value) => value.trim())
+        .filter(Boolean);
+
+const toPositiveNumber = (value: string | null) => {
+    if (!value) return null;
+    const parsed = Number(value);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+};
+
+const selectedCategoryIds = getIdList("category_id");
+const [collectionCandidate] = getIdList("collection_id", "collection");
+const initialMaxPrice = toPositiveNumber(url.searchParams.get("max_price"));
+
+const [categoriesResponse, collectionsResponse] = await Promise.all([listProductCategories({ limit: 50 }), listCollections({ limit: 20 })]);
+
+const categories = categoriesResponse.product_categories ?? [];
+const collections = collectionsResponse.collections ?? [];
+
+const resolvedCollectionId = collectionCandidate ? (collections.find((collection) => collection.id === collectionCandidate || collection.handle === collectionCandidate)?.id ?? collectionCandidate) : undefined;
+
+const productsResponse = await listProducts({
+    limit: 48,
+    offset: 0,
+    category_id: selectedCategoryIds.length ? selectedCategoryIds : undefined,
+    collection_id: resolvedCollectionId ? [resolvedCollectionId] : undefined,
+});
+
+const products = productsResponse.products ?? [];
+---
+
+<Layout collections={collections}>
+    <section class="site-container py-6 md:py-10 flex flex-col gap-3">
+        <p class="text-sm uppercase tracking-[0.2em] text-[#999]">Catálogo</p>
+        <h1 class="text-3xl md:text-4xl font-bold text-[#1f2937]">Explora nuestros productos</h1>
+        <p class="text-[#4b5563] max-w-3xl">Filtra por categoría y ajusta el rango de precios para encontrar la combinación perfecta para ti.</p>
+    </section>
+
+    <Container client:load categories={categories} collections={collections} initialProducts={products} initialCategoryIds={selectedCategoryIds} initialCollectionId={resolvedCollectionId ?? null} initialMaxPrice={initialMaxPrice} />
+
+    <Footer />
+</Layout>

@@ -7,118 +7,84 @@ import wspIcon from "../../assets/Footer/wsp.svg";
 import callIcon from "../../assets/Footer/Call.svg";
 ---
 
-<footer
-    class="relative w-full bg-[#EDA717] px-6 md:px-10 py-10 overflow-hidden"
->
-    <!-- Decoración flotante derecha -->
-    <div
-        class="absolute -top-8 -right-8 w-28 h-28 md:-top-10 md:-right-10 md:w-40 md:h-40 lg:w-70 lg:h-70 bg-green-600 rounded-full flex items-center justify-center z-10"
-    >
-        <Decoration class="w-16 h-16 md:w-24 md:h-24 lg:w-32 lg:h-32" />
-    </div>
+<footer class="w-full bg-[#EDA717] py-10 overflow-hidden mt-10">
+    <div class="site-container relative">
+        <!-- Decoración flotante derecha -->
+        <div class="absolute top-0 right-0 translate-x-1/3 -translate-y-1/3 w-72 md:w-96 lg:w-[440px] aspect-square bg-green-600 rounded-full flex items-center justify-center z-10 shadow-lg">
+            <Decoration class="w-28 md:w-40 lg:w-52 h-auto" />
+        </div>
 
-    <!-- Logo -->
-    <div class="relative z-20 mb-8 md:mb-10">
-        <Logo_mariquita class="w-60 h-auto md:w-70 lg:w-90" />
-    </div>
+        <!-- Logo -->
+        <div class="relative z-20 mb-8 md:mb-10">
+            <Logo_mariquita class="w-60 h-auto md:w-70 lg:w-90" />
+        </div>
 
-    <!-- Contenido principal -->
-    <div
-        class="relative z-20 flex flex-col md:flex-row gap-8 md:gap-12 lg:gap-40 md:ml-10 ml-8"
-    >
-        <!-- Contacto -->
-        <div class="flex flex-col text-black space-y-4 md:w-1/2 lg:w-1/3">
-            <p class="font-bold text-lg">CONTÁCTANOS</p>
+        <!-- Contenido principal -->
+        <div class="relative z-20 flex flex-col md:flex-row gap-8 md:gap-12 lg:gap-40">
+            <!-- Contacto -->
+            <div class="flex flex-col text-black space-y-4 md:w-1/2 lg:w-1/3">
+                <p class="font-bold text-lg">CONTÁCTANOS</p>
 
-            <div class="flex items-center gap-3">
-                <div class="w-6 h-6 shrink-0">
-                    <img
-                        src={wspIcon.src}
-                        alt="Whatsapp"
-                        class="w-full h-full"
-                    />
+                <div class="flex items-center gap-3">
+                    <div class="w-6 h-6 shrink-0">
+                        <img src={wspIcon.src} alt="Whatsapp" class="w-full h-full" />
+                    </div>
+                    <div class="flex flex-col">
+                        <p class="text-sm font-medium">Whatsapp</p>
+                        <span class="text-sm">+1 202-918-2132</span>
+                    </div>
                 </div>
-                <div class="flex flex-col">
-                    <p class="text-sm font-medium">Whatsapp</p>
-                    <span class="text-sm">+1 202-918-2132</span>
-                </div>
-            </div>
 
-            <div class="flex items-center gap-3">
-                <div class="w-6 h-6 shrink-0">
-                    <img
-                        src={callIcon.src}
-                        alt="Convencional"
-                        class="w-full h-full"
-                    />
+                <div class="flex items-center gap-3">
+                    <div class="w-6 h-6 shrink-0">
+                        <img src={callIcon.src} alt="Convencional" class="w-full h-full" />
+                    </div>
+                    <div class="flex flex-col">
+                        <p class="text-sm font-medium">Convencional</p>
+                        <span class="text-sm">+1 202-918-2132</span>
+                    </div>
                 </div>
-                <div class="flex flex-col">
-                    <p class="text-sm font-medium">Convencional</p>
-                    <span class="text-sm">+1 202-918-2132</span>
+
+                <p class="font-bold text-lg mt-4">REDES SOCIALES:</p>
+                <div class="flex gap-4 mt-2">
+                    <a href="#" aria-label="Instagram" class="hover:scale-110 transition-transform">
+                        <InstagramIcon class="w-6 h-6 cursor-pointer" />
+                    </a>
+                    <a href="#" aria-label="Facebook" class="hover:scale-110 transition-transform">
+                        <FacebookIcon class="w-6 h-6 cursor-pointer" />
+                    </a>
                 </div>
             </div>
 
-            <p class="font-bold text-lg mt-4">REDES SOCIALES:</p>
-            <div class="flex gap-4 mt-2">
-                <a
-                    href="#"
-                    aria-label="Instagram"
-                    class="hover:scale-110 transition-transform"
-                >
-                    <InstagramIcon class="w-6 h-6 cursor-pointer" />
-                </a>
-                <a
-                    href="#"
-                    aria-label="Facebook"
-                    class="hover:scale-110 transition-transform"
-                >
-                    <FacebookIcon class="w-6 h-6 cursor-pointer" />
-                </a>
+            <!-- Categorías populares -->
+            <div class="flex flex-col md:w-1/2 lg:w-1/3 text-black">
+                <p class="font-bold text-lg mb-4">Categorías más populares</p>
+                <ul class="space-y-2.5">
+                    <li class="flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 bg-black rounded-full"></span>
+                        <span class="text-sm hover:underline cursor-pointer">Frutos Secos</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 bg-black rounded-full"></span>
+                        <span class="text-sm hover:underline cursor-pointer">Barra Movil</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 bg-black rounded-full"></span>
+                        <span class="text-sm hover:underline cursor-pointer">Cervezas</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 bg-black rounded-full"></span>
+                        <span class="text-sm hover:underline cursor-pointer">Cócteles</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 bg-black rounded-full"></span>
+                        <span class="text-sm hover:underline cursor-pointer">Vinos</span>
+                    </li>
+                </ul>
             </div>
         </div>
 
-        <!-- Categorías populares -->
-        <div class="flex flex-col md:w-1/2 lg:w-1/3 text-black">
-            <p class="font-bold text-lg mb-4">Categorías más populares</p>
-            <ul class="space-y-2.5">
-                <li class="flex items-center gap-2">
-                    <span class="w-1.5 h-1.5 bg-black rounded-full"></span>
-                    <span class="text-sm hover:underline cursor-pointer"
-                        >Frutos Secos</span
-                    >
-                </li>
-                <li class="flex items-center gap-2">
-                    <span class="w-1.5 h-1.5 bg-black rounded-full"></span>
-                    <span class="text-sm hover:underline cursor-pointer"
-                        >Barra Movil</span
-                    >
-                </li>
-                <li class="flex items-center gap-2">
-                    <span class="w-1.5 h-1.5 bg-black rounded-full"></span>
-                    <span class="text-sm hover:underline cursor-pointer"
-                        >Cervezas</span
-                    >
-                </li>
-                <li class="flex items-center gap-2">
-                    <span class="w-1.5 h-1.5 bg-black rounded-full"></span>
-                    <span class="text-sm hover:underline cursor-pointer"
-                        >Cócteles</span
-                    >
-                </li>
-                <li class="flex items-center gap-2">
-                    <span class="w-1.5 h-1.5 bg-black rounded-full"></span>
-                    <span class="text-sm hover:underline cursor-pointer"
-                        >Vinos</span
-                    >
-                </li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- Derechos de autor -->
-    <div
-        class="relative z-20 border-t border-black/20 mt-8 pt-4 text-center text-xs md:text-sm text-black"
-    >
-        ©2025 Todos los derechos reservados. Codemind.com.ec
+        <!-- Derechos de autor -->
+        <div class="relative z-20 border-t border-black/20 mt-8 pt-4 text-center text-xs md:text-sm text-black">©2025 Todos los derechos reservados. Codemind.com.ec</div>
     </div>
 </footer>

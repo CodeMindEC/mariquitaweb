@@ -12,6 +12,7 @@
     "dependencies": {
         "@astrojs/react": "^4.4.2",
         "@medusajs/js-sdk": "^2.11.3",
+        "@medusajs/store": "^2.11.3",
         "@medusajs/types": "^2.11.3",
         "@tailwindcss/vite": "^4.1.17",
         "astro": "^5.16.0",

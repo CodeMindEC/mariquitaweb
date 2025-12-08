@@ -1,155 +1,62 @@
 ---
-import Card from "../../components/UI/Card.astro";
+import Card from "../../components/UI/Card.tsx";
 import { type StoreProduct } from "../../lib/medusajs/products";
 interface Props {
     title?: string;
     focusText?: string;
     buttonText?: string;
+    buttonHref?: string;
     products?: StoreProduct[];
     focusColor?: string;
     width?: string;
     height?: string;
 }
 
-const { title, focusText, buttonText, products = [], focusColor = "#299037" } = Astro.props;
+const { title, focusText, buttonText, buttonHref = "/catalog", products = [], focusColor = "#299037" } = Astro.props;
 ---
 
-<section class="card-section">
-    <div class="card-section__header">
-        <h2 class="card-section__title">
-            {title}
-            <span style={`color: ${focusColor}`}>{focusText}</span>
-        </h2>
-        {
-            buttonText && (
-                <a href="#" class="card-section__button">
-                    {buttonText}
-                </a>
-            )
-        }
-    </div>
-
-    <div class="card-section__container">
-        <div class="card-section__slider">
-            {products.map((p) => <Card product={p} />)}
+<section class="card-section w-full rounded-2xl bg-linear-to-b from-[#f9fafb] via-white to-white py-8 shadow-sm sm:rounded-none sm:bg-transparent sm:py-12 sm:shadow-none">
+    <div class="card-section__inner site-container space-y-8">
+        <div class="card-section__header flex flex-wrap items-center justify-between gap-4">
+            <h2 class="card-section__title text-2xl font-bold text-[#1f2937]">
+                {title}
+                <span class="block text-[#299037] sm:inline" style={`color: ${focusColor}`}>
+                    {focusText}
+                </span>
+            </h2>
+            {
+                buttonText && (
+                    <a href={buttonHref} class="card-section__button inline-flex items-center justify-center rounded-lg bg-[#299037] px-5 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#207028]">
+                        {buttonText}
+                    </a>
+                )
+            }
         </div>
-    </div>
 
-    <div class="card-section__dots"></div>
+        <div class="card-section__container relative w-full">
+            <div class="card-section__slider flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 scroll-smooth sm:pb-4 md:grid md:grid-cols-[repeat(auto-fill,minmax(250px,1fr))] md:gap-6 md:overflow-visible md:snap-none">
+                {
+                    products.map((p) => (
+                        <div class="card-section__item min-w-[85%] shrink-0 snap-start sm:min-w-[260px] md:min-w-0 md:shrink md:snap-none">
+                            <Card product={p} />
+                        </div>
+                    ))
+                }
+            </div>
+        </div>
+
+        <div class="card-section__dots mt-4 flex items-center justify-center gap-2 md:hidden"></div>
+    </div>
 </section>
 
 <style>
-    .card-section {
-        width: 100%;
-        padding: 3rem;
-    }
-
-    .card-section__header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
-        flex-wrap: wrap;
-        gap: 1rem;
-    }
-
-    .card-section__title {
-        font-size: 1.8rem;
-        font-weight: bold;
-        margin: 0;
-    }
-
-    .card-section__button {
-        padding: 0.6rem 1.5rem;
-        background-color: #299037;
-        color: white;
-        text-decoration: none;
-        border-radius: 0.5rem;
-        font-weight: 500;
-        transition: background-color 0.3s ease;
-    }
-
-    .card-section__button:hover {
-        background-color: #207028;
-    }
-
-    .card-section__container {
-        position: relative;
-        width: 100%;
-    }
-
     .card-section__slider {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 1.5rem;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
     }
 
-    .card-section__item {
-        width: 100%;
-    }
-
-    .card-section__dots {
+    .card-section__slider::-webkit-scrollbar {
         display: none;
-    }
-
-    /* Estilos para mobile - Slider */
-    @media (max-width: 768px) {
-        .card-section {
-            padding: 2rem 1rem;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(to bottom, #f9fafb 0%, #ffffff 100%);
-            border-radius: 1rem;
-            box-shadow:
-                0 2px 8px rgba(0, 0, 0, 0.04),
-                0 1px 3px rgba(0, 0, 0, 0.06);
-        }
-
-        .card-section:last-of-type {
-            margin-bottom: 0;
-        }
-
-        .card-section__container {
-            overflow: hidden;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .card-section__slider {
-            display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            gap: 1rem;
-            padding: 0.5rem 0;
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* IE/Edge */
-        }
-
-        .card-section__slider::-webkit-scrollbar {
-            display: none; /* Chrome/Safari */
-        }
-
-        .card-section__item {
-            flex: 0 0 85%;
-            scroll-snap-align: start;
-            scroll-snap-stop: always;
-        }
-
-        .card-section__dots {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-top: 1rem;
-            padding: 0.5rem 0;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .card-section__item {
-            flex: 0 0 90%;
-        }
-
-        .card-section__title {
-            font-size: 1.5rem;
-        }
     }
 </style>
 
