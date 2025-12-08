@@ -1,4 +1,5 @@
 import type { StoreProduct } from "./products"
+import { DEFAULT_CURRENCY } from "./products"
 
 interface VariantCalculatedPrice {
     calculated_amount?: number
@@ -9,6 +10,17 @@ interface VariantCalculatedPrice {
         price_list_type?: string
     }
 }
+
+interface VariantPriceEntry {
+    amount?: number
+    currency_code?: string
+    includes_tax?: boolean
+}
+
+type StoreProductVariants = NonNullable<StoreProduct["variants"]>
+type VariantWithFallbackPrices = StoreProductVariants extends Array<infer Variant>
+    ? Variant & { prices?: VariantPriceEntry[] }
+    : { prices?: VariantPriceEntry[] }
 
 export interface ProductPricingSummary {
     price: number
@@ -39,6 +51,48 @@ const amountIncludesTax = (price: VariantCalculatedPrice | null | undefined) =>
         null,
     )
 
+const resolveFallbackVariantAmount = (
+    variants: StoreProduct["variants"] | null | undefined,
+) => {
+    if (!Array.isArray(variants)) {
+        return null
+    }
+
+    const normalizedCurrency = DEFAULT_CURRENCY?.toLowerCase() ?? null
+    const candidates = variants
+        .map((variant) => {
+            if (!variant) return null
+            const priceList = (variant as VariantWithFallbackPrices).prices ?? []
+            if (!priceList.length) return null
+
+            const preferred = normalizedCurrency
+                ? priceList.find(
+                    (entry) =>
+                        entry.currency_code?.toLowerCase() === normalizedCurrency &&
+                        typeof entry.amount === "number",
+                )
+                : null
+
+            const resolvedEntry = preferred ?? priceList.find((entry) => typeof entry.amount === "number") ?? null
+            if (!resolvedEntry || typeof resolvedEntry.amount !== "number") {
+                return null
+            }
+
+            return {
+                amount: resolvedEntry.amount,
+                includesTax: Boolean(resolvedEntry.includes_tax),
+            }
+        })
+        .filter((entry): entry is { amount: number; includesTax: boolean } => Boolean(entry))
+
+    if (!candidates.length) {
+        return null
+    }
+
+    candidates.sort((a, b) => a.amount - b.amount)
+    return candidates[0]
+}
+
 export function resolveProductPricing(product: StoreProduct): ProductPricingSummary {
     const variants = product.variants ?? []
 
@@ -55,8 +109,16 @@ export function resolveProductPricing(product: StoreProduct): ProductPricingSumm
     [0]
 
     const priceSet = featuredEntry?.priceSet ?? null
-    const featuredAmount = featuredEntry?.amount ?? null
-    const includesTax = amountIncludesTax(priceSet)
+    let featuredAmount = featuredEntry?.amount ?? null
+    let includesTax = amountIncludesTax(priceSet)
+
+    if (featuredAmount === null) {
+        const fallbackEntry = resolveFallbackVariantAmount(variants)
+        if (fallbackEntry) {
+            featuredAmount = fallbackEntry.amount
+            includesTax = fallbackEntry.includesTax
+        }
+    }
     const calculatedAmount = includesTax
         ? priceSet?.calculated_amount_with_tax ?? priceSet?.calculated_amount ?? null
         : priceSet?.calculated_amount ?? null

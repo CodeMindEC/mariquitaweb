@@ -33,7 +33,8 @@
     "@medusajs/icons": "^2.11.3",
     "@medusajs/medusa": "2.11.3",
     "@medusajs/types": "^2.11.3",
-    "@medusajs/ui": "^4.0.27"
+    "@medusajs/ui": "^4.0.27",
+    "@rokmohar/medusa-plugin-meilisearch": "^1.3.5"
   },
   "devDependencies": {
     "@medusajs/test-utils": "2.11.3",

@@ -2,7 +2,8 @@
 import Layout from "../layouts/Layout.astro";
 import Footer from "../components/UI/Footer.astro";
 import Container from "../components/UI/Container.tsx";
-import { listProductCategories, listProducts, listCollections } from "../lib/medusajs/products";
+import { listProductCategories, listProducts, listCollections, listProductTags, listProductTypes } from "../lib/medusajs/products";
+import { resolveProductPricing } from "../lib/medusajs/pricing";
 
 const url = new URL(Astro.request.url);
 
@@ -20,35 +21,68 @@ const toPositiveNumber = (value: string | null) => {
     return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
 };
 
+const computePriceRange = (products: import("../lib/medusajs/products").StoreProduct[]) => {
+    const prices = products.map((product) => resolveProductPricing(product).price).filter((price) => typeof price === "number" && price >= 0);
+
+    if (!prices.length) {
+        return { min: 0, max: 100 };
+    }
+
+    return {
+        min: Math.max(0, Math.floor(Math.min(...prices))),
+        max: Math.max(1, Math.ceil(Math.max(...prices))),
+    };
+};
+
 const selectedCategoryIds = getIdList("category_id");
+const selectedTagIds = getIdList("tag", "tag_id", "tags");
 const [collectionCandidate] = getIdList("collection_id", "collection");
+const [typeCandidate] = getIdList("type_id", "type");
 const initialMaxPrice = toPositiveNumber(url.searchParams.get("max_price"));
 
-const [categoriesResponse, collectionsResponse] = await Promise.all([listProductCategories({ limit: 50 }), listCollections({ limit: 20 })]);
+const [categoriesResponse, collectionsResponse, tagsResponse, typesResponse] = await Promise.all([listProductCategories({ limit: 50 }), listCollections({ limit: 20 }), listProductTags({ limit: 100 }), listProductTypes({ limit: 50 })]);
 
 const categories = categoriesResponse.product_categories ?? [];
 const collections = collectionsResponse.collections ?? [];
+const productTags = tagsResponse.product_tags ?? [];
+const productTypes = typesResponse.product_types ?? [];
 
 const resolvedCollectionId = collectionCandidate ? (collections.find((collection) => collection.id === collectionCandidate || collection.handle === collectionCandidate)?.id ?? collectionCandidate) : undefined;
 
-const productsResponse = await listProducts({
-    limit: 48,
+const resolvedTypeId = typeCandidate ? (productTypes.find((type) => type.id === typeCandidate || type.value === typeCandidate)?.id ?? typeCandidate) : undefined;
+
+const initialResultData = await listProducts({
+    limit: 12,
     offset: 0,
     category_id: selectedCategoryIds.length ? selectedCategoryIds : undefined,
     collection_id: resolvedCollectionId ? [resolvedCollectionId] : undefined,
+    tag_id: selectedTagIds.length ? selectedTagIds : undefined,
+    type_id: resolvedTypeId ? [resolvedTypeId] : undefined,
+}).catch((error) => {
+    console.error("Error cargando el catálogo inicial", error);
+    return {
+        products: [],
+        count: 0,
+        limit: 12,
+        offset: 0,
+        priceRange: { min: 0, max: 100 },
+    };
 });
 
-const products = productsResponse.products ?? [];
+const initialResult = {
+    ...initialResultData,
+    priceRange: computePriceRange(initialResultData.products ?? []),
+};
 ---
 
 <Layout collections={collections}>
     <section class="site-container py-6 md:py-10 flex flex-col gap-3">
-        <p class="text-sm uppercase tracking-[0.2em] text-[#999]">Catálogo</p>
-        <h1 class="text-3xl md:text-4xl font-bold text-[#1f2937]">Explora nuestros productos</h1>
-        <p class="text-[#4b5563] max-w-3xl">Filtra por categoría y ajusta el rango de precios para encontrar la combinación perfecta para ti.</p>
+        <p class="text-sm uppercase tracking-[0.2em] text-text-secondary opacity-80">Catálogo</p>
+        <h1 class="text-3xl md:text-4xl font-bold text-text-primary">Explora nuestros productos</h1>
+        <p class="text-text-secondary max-w-3xl">Filtra por categoría y ajusta el rango de precios para encontrar la combinación perfecta para ti.</p>
     </section>
 
-    <Container client:load categories={categories} collections={collections} initialProducts={products} initialCategoryIds={selectedCategoryIds} initialCollectionId={resolvedCollectionId ?? null} initialMaxPrice={initialMaxPrice} />
+    <Container client:load categories={categories} collections={collections} tags={productTags} types={productTypes} initialResult={initialResult} initialCategoryIds={selectedCategoryIds} initialCollectionId={resolvedCollectionId ?? null} initialTagIds={selectedTagIds} initialTypeId={resolvedTypeId ?? null} initialMaxPrice={initialMaxPrice} />
 
     <Footer />
 </Layout>

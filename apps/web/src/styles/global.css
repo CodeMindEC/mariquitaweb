@@ -17,6 +17,16 @@ body {
   --site-inline-padding: clamp(1rem, 3vw, 2.5rem);
 }
 
+@theme {
+  --color-primary: #299037;
+  --color-secondary: #eda717;
+  --color-text-primary: #1f2937;
+  --color-text-secondary: #555555;
+  --color-surface-primary: color-mix(in srgb, var(--color-primary) 18%, white);
+  --color-surface-secondary: color-mix(in srgb, var(--color-secondary) 40%, white);
+  --color-border-muted: color-mix(in srgb, var(--color-primary) 10%, var(--color-secondary) 6%);
+}
+
 .site-container {
   width: min(var(--site-max-width), 95vw);
   margin-inline: auto;
@@ -36,6 +46,7 @@ body {
   -webkit-box-orient: vertical;
   overflow: hidden;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
 .carousel-bg-frutos {
@@ -46,4 +57,25 @@ body {
 .carousel-bg-novedades {
   background-image: url("/3.png");
   background-repeat: no-repeat;
+}
+
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(90deg,
+      color-mix(in srgb, var(--color-surface-secondary) 80%, white) 25%,
+      color-mix(in srgb, white 70%, var(--color-surface-primary) 30%) 37%,
+      color-mix(in srgb, var(--color-surface-secondary) 80%, white) 63%);
+  background-size: 400% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
+  }
 }
