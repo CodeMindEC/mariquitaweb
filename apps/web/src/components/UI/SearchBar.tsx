@@ -86,6 +86,7 @@ export default function SearchBar() {
     }, [isClient, openSearch])
 
     const queryHasValue = query.trim().length > 0
+    const showSkeleton = loading && results.length === 0
     const showEmptyState = !loading && !error && queryHasValue && results.length === 0 && hasSearched
 
     const collapsedField = (
@@ -140,7 +141,7 @@ export default function SearchBar() {
                                     ref={inputRef}
                                     value={query}
                                     onChange={(event) => setQuery(event.target.value)}
-                                    placeholder="¿Qué snack sano estás buscando hoy?"
+                                    placeholder="¿Qué snack buscamos hoy?"
                                     className="flex-1 border-none bg-transparent text-base text-text-primary outline-none placeholder:text-text-secondary"
                                     aria-label="Buscar productos"
                                     autoComplete="off"
@@ -156,7 +157,7 @@ export default function SearchBar() {
                             </div>
 
                             <div className="max-h-[60vh] overflow-y-auto px-4 py-4">
-                                {loading && (
+                                {showSkeleton && (
                                     <div className="flex flex-col gap-3" aria-live="polite">
                                         {Array.from({ length: Math.min(4, SUGGESTION_LIMIT) }).map((_, index) => (
                                             <SuggestionSkeleton key={`suggestion-skeleton-${index}`} />

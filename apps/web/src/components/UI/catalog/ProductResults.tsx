@@ -1,4 +1,4 @@
-import { motion } from "motion/react"
+import { AnimatePresence, motion } from "motion/react"
 import type { StoreProduct } from "../../../lib/medusajs/products"
 import Card, { CardSkeleton } from "../Card"
 
@@ -14,6 +14,7 @@ interface ProductResultsProps {
     hasMore: boolean
     onLoadMore(): void
     loading: boolean
+    isRefining: boolean
 }
 
 export default function ProductResults({
@@ -28,6 +29,7 @@ export default function ProductResults({
     hasMore,
     onLoadMore,
     loading,
+    isRefining,
 }: ProductResultsProps) {
     return (
         <section className="flex-1 flex flex-col gap-4 w-full overflow-x-hidden overflow-y-visible">
@@ -45,7 +47,7 @@ export default function ProductResults({
                 )}
             </div>
 
-            <div className="min-h-80 w-full overflow-y-clip pb-10">
+            <div className="relative min-h-80 w-full overflow-y-clip pb-10">
                 {error ? (
                     <motion.div
                         key="error-state"
@@ -122,6 +124,29 @@ export default function ProductResults({
                         </button>
                     </div>
                 )}
+                <AnimatePresence>
+                    {isRefining && (
+                        <motion.div
+                            key="refining-overlay"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="pointer-events-none fixed inset-0 z-10 flex items-center justify-center bg-white/70 backdrop-blur-sm"
+                        >
+                            <div className="pointer-events-auto flex items-center gap-4 rounded-3xl border border-border-muted bg-white px-5 py-4 shadow-xl">
+                                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+                                <div>
+                                    <p className="text-sm font-semibold text-text-primary">
+                                        Actualizando resultados
+                                    </p>
+                                    <p className="text-xs text-text-secondary">
+                                        Estamos aplicando tus filtros.
+                                    </p>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
         </section>
     )

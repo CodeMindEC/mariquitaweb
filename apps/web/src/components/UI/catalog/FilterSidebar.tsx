@@ -15,6 +15,11 @@ const getAssetSrc = (asset: string | { src: string }) =>
 const filterIconSrc = getAssetSrc(FilterIcon)
 const downIconSrc = getAssetSrc(DownIcon)
 
+function cleanTextTags(str:string) {
+    const clean = str.replace(/-+/g, " ").toLowerCase().trim();
+    return clean.charAt(0).toUpperCase() + clean.slice(1);
+}
+
 interface FilterSidebarProps {
     isOpen: boolean
     onToggle(): void
@@ -84,11 +89,16 @@ export default function FilterSidebar({
     return (
         <>
             <button
-                className="lg:hidden fixed top-20 left-4 w-12 h-12 bg-secondary text-white rounded-full flex items-center justify-center shadow-lg"
+                className="lg:hidden fixed bottom-10 left-4 w-16 h-16 bg-secondary text-white rounded-full flex items-center justify-center shadow-lg"
                 onClick={onToggle}
                 aria-label="Mostrar filtros"
             >
-                <img src={filterIconSrc} alt="Filtros" className="w-6 h-6" />
+                <img src={filterIconSrc} alt="Filtros" className="w-8 h-8" />
+                {hasActiveFilters && (
+                    <span className="absolute top-0 right-0 flex h-7 w-7 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
+                        {activeFilterCount}
+                    </span>
+                )}
             </button>
 
             {isOpen && (
@@ -191,7 +201,7 @@ export default function FilterSidebar({
                                     <button
                                         key={id}
                                         type="button"
-                                        className={`flex w-full items-center justify-between rounded-2xl px-4 py-2 text-sm transition ${isActive ? "bg-surface-primary text-primary" : "text-text-primary hover:bg-surface-primary/80"}`}
+                                        className={`flex w-full items-center text-left justify-between rounded-2xl px-4 py-2 text-sm transition ${isActive ? "bg-surface-primary text-primary" : "text-text-primary hover:bg-surface-primary/80"}`}
                                         aria-pressed={isActive ? "true" : "false"}
                                         onClick={() => onTypeSelect(isActive ? null : id)}
                                     >
@@ -217,7 +227,7 @@ export default function FilterSidebar({
                                         onChange={() => onTagToggle(tag.id!)}
                                     />
                                     <label className="cursor-pointer text-sm">
-                                        {tag.value ?? "Etiqueta"}
+                                        {cleanTextTags(tag.value) ?? "Etiqueta"}
                                     </label>
                                 </li>
                             ))}

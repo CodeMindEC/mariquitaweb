@@ -271,32 +271,35 @@ export default function Container({
             ? `${filteredProducts.length} / ${result.count}`
             : String(filteredProducts.length)
     const isInitialLoading = loading && result.products.length === 0
+    const isRefining = loading && result.products.length > 0
 
     return (
         <div className="site-container w-full overflow-x-hidden ">
             <div className="w-full relative flex flex-col lg:flex-row gap-4 lg:gap-6 py-4 lg:py-5">
-                <FilterSidebar
-                    isOpen={showFilters}
-                    onToggle={() => setShowFilters((prev) => !prev)}
-                    onClose={() => setShowFilters(false)}
-                    categories={categoriesToShow}
-                    collections={collectionsToShow}
-                    tags={tagsToShow}
-                    types={typesToShow}
-                    selectedCategories={selectedCategories}
-                    selectedCollection={selectedCollection}
-                    selectedTags={selectedTags}
-                    selectedType={selectedType}
-                    hasActiveFilters={hasActiveFilters}
-                    activeFilterCount={activeFilterCount}
-                    maxPrice={maxPrice}
-                    priceBounds={priceBounds}
-                    onCategoryToggle={toggleCategory}
-                    onCollectionSelect={handleCollectionSelect}
-                    onTagToggle={toggleTag}
-                    onTypeSelect={handleTypeSelect}
-                    onPriceChange={handlePriceChange}
-                />
+                <div className="z-100 md:z-auto">
+                    <FilterSidebar
+                        isOpen={showFilters}
+                        onToggle={() => setShowFilters((prev) => !prev)}
+                        onClose={() => setShowFilters(false)}
+                        categories={categoriesToShow}
+                        collections={collectionsToShow}
+                        tags={tagsToShow}
+                        types={typesToShow}
+                        selectedCategories={selectedCategories}
+                        selectedCollection={selectedCollection}
+                        selectedTags={selectedTags}
+                        selectedType={selectedType}
+                        hasActiveFilters={hasActiveFilters}
+                        activeFilterCount={activeFilterCount}
+                        maxPrice={maxPrice}
+                        priceBounds={priceBounds}
+                        onCategoryToggle={toggleCategory}
+                        onCollectionSelect={handleCollectionSelect}
+                        onTagToggle={toggleTag}
+                        onTypeSelect={handleTypeSelect}
+                        onPriceChange={handlePriceChange}
+                    />
+                </div>
 
                 <ProductResults
                     totalProductsLabel={totalProductsLabel}
@@ -310,6 +313,7 @@ export default function Container({
                     hasMore={hasMore}
                     onLoadMore={loadMore}
                     loading={loading}
+                    isRefining={isRefining}
                 />
             </div>
         </div>
