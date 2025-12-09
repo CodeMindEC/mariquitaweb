@@ -5,6 +5,7 @@ import Location from "../../assets/header/icon_location.svg";
 import Oferta from "../../assets/header/oferta.svg";
 import type { StoreCollection } from "../../lib/medusajs/products";
 import SearchBar from "./SearchBar";
+import Button from "./shared/Button.astro";
 
 interface Props {
     collections?: StoreCollection[];
@@ -63,33 +64,36 @@ const navLinks = [
 
     <nav class="w-full border-t border-border-muted bg-white">
         <div class="site-container flex flex-col md:flex-row items-stretch md:items-center justify-between py-3 gap-3">
-            <ul class="flex flex-wrap items-center gap-3 md:gap-6 text-sm font-semibold text-text-primary">
-                {
-                    navLinks.map((link) => (
-                        <li>
-                            <a href={link.href} class="inline-flex items-center gap-1 px-3 py-2 rounded-lg transition-colors duration-200 hover:bg-surface-primary/30 hover:text-primary">
-                                {link.label}
-                            </a>
-                        </li>
-                    ))
-                }
+            <ul class="flex flex-wrap items-center justify-between gap-3 md:gap-6 text-sm font-semibold text-text-primary w-full">
+                <div class="flex flex-wrap items-center gap-3 md:gap-6">
+                    {
+                        navLinks.map((link) => (
+                            <li>
+                                <a href={link.href} class="inline-flex items-center gap-1 px-3 py-2 rounded-lg transition-colors duration-200 hover:bg-surface-primary/30 hover:text-primary">
+                                    {link.label}
+                                </a>
+                            </li>
+                        ))
+                    }
+                </div>
 
                 <li class="relative text-text-primary">
                     <details class="group peer" role="list">
-                        <summary class="list-none inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold text-text-primary cursor-pointer transition-colors duration-200 hover:bg-surface-primary/30 hover:text-primary">
-                            Productos y Servicios
+                        <summary class="list-none">
+                            <Button shineAuto={true} ariaLabel="Productos y Servicios" as="div" liftOnHover={false}>
+                                <div class="flex flex-row gap-2 items-center">
+                                    <p class="text-white font-semibold text-sm">Productos y Servicios</p>
 
-                            <span class="text-xs text-text-secondary">
-                                {servicesCollections.length}
-                            </span>
-                            <span class="transition-transform duration-300 group-open:rotate-180">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 9.29289C7.68342 8.90237 8.31658 8.90237 8.70711 9.29289L12 12.5858L15.2929 9.29289C15.6834 8.90237 16.3166 8.90237 16.7071 9.29289C17.0976 9.68342 17.0976 10.3166 16.7071 10.7071L12.7071 14.7071C12.5196 14.8946 12.2652 15 12 15C11.7348 15 11.4804 14.8946 11.2929 14.7071L7.29289 10.7071C6.90237 10.3166 6.90237 9.68342 7.29289 9.29289Z" fill="currentColor"></path>
-                                </svg>
-                            </span>
+                                    <span class="transition-transform duration-300 group-open:rotate-180">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 9.29289C7.68342 8.90237 8.31658 8.90237 8.70711 9.29289L12 12.5858L15.2929 9.29289C15.6834 8.90237 16.3166 8.90237 16.7071 9.29289C17.0976 9.68342 17.0976 10.3166 16.7071 10.7071L12.7071 14.7071C12.5196 14.8946 12.2652 15 12 15C11.7348 15 11.4804 14.8946 11.2929 14.7071L7.29289 10.7071C6.90237 10.3166 6.90237 9.68342 7.29289 9.29289Z" fill="white"></path>
+                                        </svg>
+                                    </span>
+                                </div></Button
+                            >
                         </summary>
 
-                        <div class="absolute left-0 mt-2 min-w-[250px] rounded-xl border border-border-muted bg-white shadow-xl p-3 z-40 origin-top scale-95 opacity-0 transform transition-all duration-200 ease-in-out group-open:opacity-100 group-open:scale-100">
+                        <div class="absolute right-0 mt-2 min-w-[250px] rounded-xl border border-border-muted bg-white shadow-xl p-3 z-40 origin-top scale-95 opacity-0 transform transition-all duration-200 ease-in-out group-open:opacity-100 group-open:scale-100">
                             <p class="text-xs uppercase tracking-wide text-text-secondary mb-2">Productos y Servicios</p>
                             <a href="/catalog" class="block w-full text-sm font-medium text-primary bg-surface-primary rounded-lg px-3 py-2 mb-2 hover:bg-surface-primary/50"> Ver todo el catálogo </a>
                             {

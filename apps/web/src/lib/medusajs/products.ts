@@ -358,3 +358,8 @@ const priceFormatter = new Intl.NumberFormat("es-EC", {
 })
 
 export const formatPrice = (amount: number) => priceFormatter.format(amount)
+
+export const getProductThumbnail = (product: StoreProduct) =>
+    product.thumbnail ?? product.images?.[0]?.url ?? "/images/product-placeholder.jpg"
+
+export const getProductTitle = (product: StoreProduct) => product.title ?? "Producto sin nombre"

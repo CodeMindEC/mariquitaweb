@@ -27,6 +27,7 @@ body {
   --color-border-muted: color-mix(in srgb, var(--color-primary) 10%, var(--color-secondary) 6%);
 }
 
+
 .site-container {
   width: min(var(--site-max-width), 95vw);
   margin-inline: auto;

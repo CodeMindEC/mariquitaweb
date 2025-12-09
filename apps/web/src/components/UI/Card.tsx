@@ -1,10 +1,6 @@
 import type { StoreProduct } from "../../lib/medusajs/products"
-import { formatPrice } from "../../lib/medusajs/products"
-import {
-    getProductThumbnail,
-    getProductTitle,
-    resolveProductPricing,
-} from "../../lib/medusajs/pricing"
+import { formatPrice, getProductThumbnail, getProductTitle } from "../../lib/medusajs/products"
+import { resolveProductPricing } from "../../lib/medusajs/pricing"
 
 interface Props {
     product?: StoreProduct | null

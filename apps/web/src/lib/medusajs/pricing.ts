@@ -154,7 +154,3 @@ export function resolveProductPricing(product: StoreProduct): ProductPricingSumm
     }
 }
 
-export const getProductThumbnail = (product: StoreProduct) =>
-    product.thumbnail ?? product.images?.[0]?.url ?? "/images/placeholder-product.jpg"
-
-export const getProductTitle = (product: StoreProduct) => product.title ?? "Producto sin nombre"
