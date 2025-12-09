@@ -3,7 +3,7 @@
     "type": "module",
     "version": "0.0.1",
     "scripts": {
-        "dev": "astro dev",
+        "dev": "wait-on http://localhost:9000/app && astro dev",
         "build": "astro build",
         "preview": "astro preview",
         "astro": "astro",
@@ -25,6 +25,7 @@
     "devDependencies": {
         "@astrojs/check": "^0.9.6",
         "@astrojs/node": "^9.5.1",
-        "typescript": "^5.6.2"
+        "typescript": "^5.6.2",
+        "wait-on": "^9.0.3"
     }
 }
