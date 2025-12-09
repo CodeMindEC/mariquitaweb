@@ -1,0 +1,71 @@
+---
+interface Props {
+    href?: string;
+    shineAuto?: boolean;
+    ariaLabel?: string;
+    as?: "button" | "div";
+    liftOnHover?: boolean;
+}
+
+const { href, shineAuto = false, ariaLabel, as = "button", liftOnHover = true } = Astro.props as Props;
+
+const staticClasses = "group relative p-4 rounded-2xl backdrop-blur-xl border-2 border-primary/40 bg-linear-to-br from-primary/90 via-primary/70 to-surface-primary/90 shadow-lg shadow-primary/20 hover:shadow-primary/35 active:scale-95 transition-all duration-500 ease-out cursor-pointer hover:border-primary/70 overflow-hidden";
+const liftClasses = liftOnHover ? "hover:scale-[1.02] hover:-translate-y-1" : "";
+const baseClasses = [staticClasses, liftClasses].filter(Boolean).join(" ");
+
+const renderAsDiv = !href && as === "div";
+
+const shineMotionClasses = shineAuto ? "animate-[shine-slide_2.25s_linear_infinite]" : "-translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out";
+
+const glowOpacityClasses = shineAuto ? "opacity-80" : "opacity-0 group-hover:opacity-100";
+
+const actionLabel = ariaLabel ?? undefined;
+---
+
+<div class="flex flex-col gap-6 max-w-sm mx-auto relative z-10">
+    {
+        href ? (
+            <a href={href} class={baseClasses} aria-label={actionLabel}>
+                <div class:list={["absolute inset-0 bg-linear-to-r from-transparent via-white/35 to-transparent pointer-events-none", shineMotionClasses]} />
+
+                <div class:list={["absolute inset-0 rounded-2xl bg-linear-to-r from-primary/20 via-white/25 to-primary/20 pointer-events-none transition-opacity duration-500", glowOpacityClasses]} />
+
+                <div class="relative z-10">
+                    <slot />
+                </div>
+            </a>
+        ) : renderAsDiv ? (
+            <div class={baseClasses} aria-label={actionLabel} role="presentation">
+                <div class:list={["absolute inset-0 bg-linear-to-r from-transparent via-white/35 to-transparent pointer-events-none", shineMotionClasses]} />
+
+                <div class:list={["absolute inset-0 rounded-2xl bg-linear-to-r from-primary/20 via-white/25 to-primary/20 pointer-events-none transition-opacity duration-500", glowOpacityClasses]} />
+
+                <div class="relative z-10">
+                    <slot />
+                </div>
+            </div>
+        ) : (
+            <button type="button" class={baseClasses} aria-label={actionLabel}>
+                <div class:list={["absolute inset-0 bg-linear-to-r from-transparent via-white/35 to-transparent pointer-events-none", shineMotionClasses]} />
+
+                <div class:list={["absolute inset-0 rounded-2xl bg-linear-to-r from-primary/20 via-white/25 to-primary/20 pointer-events-none transition-opacity duration-500", glowOpacityClasses]} />
+
+                <div class="relative z-10">
+                    <slot />
+                </div>
+            </button>
+        )
+    }
+</div>
+
+<style>
+    @keyframes shine-slide {
+        0% {
+            transform: translateX(-100%);
+        }
+
+        100% {
+            transform: translateX(100%);
+        }
+    }
+</style>

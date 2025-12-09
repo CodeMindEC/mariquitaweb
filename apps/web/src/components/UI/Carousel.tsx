@@ -60,7 +60,7 @@ export default function Carousel() {
         {/* botón izq */}
         <button
           onClick={anterior}
-          className="pointer-events-auto flex justify-center items-center bg-[#299037]
+          className="pointer-events-auto flex justify-center items-center bg-primary
             w-[10vw] h-[10vw] min-w-10 min-h-10 max-w-[60px] max-h-[60px]
             rounded-full p-1.5 transition hover:bg-black/50 shadow-lg -translate-x-1/3"
         >
@@ -72,7 +72,7 @@ export default function Carousel() {
         {/* botón der */}
         <button
           onClick={siguiente}
-          className="pointer-events-auto flex  bg-[#299037]
+          className="pointer-events-auto flex  bg-primary
             w-[10vw] h-[10vw] min-w-10 min-h-10 max-w-[60px] max-h-[60px]
             rounded-full p-1.5 transition hover:bg-black/50 shadow-lg translate-x-1/3"
         >

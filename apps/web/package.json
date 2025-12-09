@@ -3,7 +3,7 @@
     "type": "module",
     "version": "0.0.1",
     "scripts": {
-        "dev": "astro dev",
+        "dev": "wait-on http://localhost:9000/app && astro dev",
         "build": "astro build",
         "preview": "astro preview",
         "astro": "astro",
@@ -18,12 +18,17 @@
         "@nanostores/react": "^1.0.0",
         "@tailwindcss/vite": "^4.1.17",
         "astro": "^5.16.0",
+        "lru-cache": "^11.0.1",
+        "motion": "^12.23.25",
         "nanostores": "^1.1.0",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
         "tailwindcss": "^4.1.17"
     },
     "devDependencies": {
-        "@astrojs/node": "^9.5.1"
+        "@astrojs/check": "^0.9.6",
+        "@astrojs/node": "^9.5.1",
+        "typescript": "^5.6.2",
+        "wait-on": "^9.0.3"
     }
 }
