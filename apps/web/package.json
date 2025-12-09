@@ -14,8 +14,11 @@
         "@medusajs/js-sdk": "^2.11.3",
         "@medusajs/store": "^2.11.3",
         "@medusajs/types": "^2.11.3",
+        "@nanostores/persistent": "^1.2.0",
+        "@nanostores/react": "^1.0.0",
         "@tailwindcss/vite": "^4.1.17",
         "astro": "^5.16.0",
+        "nanostores": "^1.1.0",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
         "tailwindcss": "^4.1.17"
