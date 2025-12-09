@@ -26,27 +26,41 @@ const navLinks = [
 ---
 
 <header class="w-full border-b border-border-muted">
-    <!-- Header Top -->
+  <!-- Header Top -->
 
-    <div class="w-full bg-surface-secondary/30 text-text-secondary text-xs sm:text-sm">
-        <div class="site-container flex flex-col md:flex-row items-center justify-between gap-2 py-1">
-            <p class="text-[12px] sm:text-xs md:text-sm text-text-primary">Snack sano, sabor intenso</p>
+  <div
+    class="w-full bg-surface-secondary/30 text-text-secondary text-xs sm:text-sm"
+  >
+    <div
+      class="site-container flex flex-col md:flex-row items-center justify-between gap-2 py-1"
+    >
+      <p class="text-[12px] sm:text-xs md:text-sm text-text-primary">
+        Snack sano, sabor intenso
+      </p>
 
-            <div class="flex flex-row items-center gap-2 sm:gap-4">
-                <div class="flex items-center gap-1 sm:gap-2 cursor-pointer transition-transform duration-300 hover:scale-110 text-text-primary">
-                    <Location width={16} height={16} />
-                    <a class="text-[12px] sm:text-xs text-text-secondary">Delivery: 0986345616</a>
-                </div>
-
-                <div class="hidden sm:block border-l border-border-muted h-4"></div>
-
-                <div class="flex items-center gap-1 sm:gap-2 cursor-pointer transition-transform duration-300 hover:scale-110 text-text-primary">
-                    <Oferta width={16} height={16} />
-                    <a class="text-[12px] sm:text-xs text-text-secondary">Todas las ofertas</a>
-                </div>
-            </div>
+      <div class="flex flex-row items-center gap-2 sm:gap-4">
+        <div
+          class="flex items-center gap-1 sm:gap-2 cursor-pointer transition-transform duration-300 hover:scale-110 text-text-primary"
+        >
+          <Location width={16} height={16} />
+          <a class="text-[12px] sm:text-xs text-text-secondary"
+            >Delivery: 0986345616</a
+          >
         </div>
+
+        <div class="hidden sm:block border-l border-border-muted h-4"></div>
+
+        <div
+          class="flex items-center gap-1 sm:gap-2 cursor-pointer transition-transform duration-300 hover:scale-110 text-text-primary"
+        >
+          <Oferta width={16} height={16} />
+          <a class="text-[12px] sm:text-xs text-text-secondary"
+            >Todas las ofertas</a
+          >
+        </div>
+      </div>
     </div>
+  </div>
 
   <!-- Header Bottom -->
   <div class="w-full bg-white">
@@ -58,68 +72,124 @@ const navLinks = [
         <Logo_mariquita class="block h-full w-auto" />
       </a>
 
-            <!-- Search + Carrito -->
-            <div class="flex-1 flex flex-row items-center sm:justify-end gap-2 md:gap-4 w-full">
-                <SearchBar client:load />
-                <Carrito class="w-10 h-10 cursor-pointer transition-transform duration-300 hover:scale-110" />
-            </div>
-        </div>
+      <!-- Search + Carrito -->
+      <div
+        class="flex-1 flex flex-row items-center sm:justify-end gap-2 md:gap-4 w-full"
+      >
+        <SearchBar client:load />
+        <a href="/shoppingcar">
+          <Carrito
+            class="w-10 h-10 cursor-pointer transition-transform duration-300 hover:scale-110"
+          />
+        </a>
+      </div>
     </div>
+  </div>
 
-    <nav class="w-full border-t border-border-muted bg-white">
-        <div class="site-container flex flex-col md:flex-row items-stretch md:items-center justify-between py-3 gap-3">
-            <ul class="flex flex-wrap items-center justify-between gap-3 md:gap-6 text-sm font-semibold text-text-primary w-full">
-                <div class="flex flex-wrap items-center gap-3 md:gap-6">
-                    {
-                        navLinks.map((link) => (
-                            <li>
-                                <a href={link.href} class="inline-flex items-center gap-1 px-3 py-2 rounded-lg transition-colors duration-200 hover:bg-surface-primary/30 hover:text-primary">
-                                    {link.label}
-                                </a>
-                            </li>
-                        ))
-                    }
-                </div>
-
-                <li class="relative text-text-primary">
-                    <details class="group peer" role="list">
-                        <summary class="list-none">
-                            <Button shineAuto={true} ariaLabel="Productos y Servicios" as="div" liftOnHover={false}>
-                                <div class="flex flex-row gap-2 items-center">
-                                    <p class="text-white font-semibold text-sm">Productos y Servicios</p>
-
-                                    <span class="transition-transform duration-300 group-open:rotate-180">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 9.29289C7.68342 8.90237 8.31658 8.90237 8.70711 9.29289L12 12.5858L15.2929 9.29289C15.6834 8.90237 16.3166 8.90237 16.7071 9.29289C17.0976 9.68342 17.0976 10.3166 16.7071 10.7071L12.7071 14.7071C12.5196 14.8946 12.2652 15 12 15C11.7348 15 11.4804 14.8946 11.2929 14.7071L7.29289 10.7071C6.90237 10.3166 6.90237 9.68342 7.29289 9.29289Z" fill="white"></path>
-                                        </svg>
-                                    </span>
-                                </div></Button
-                            >
-                        </summary>
-
-                        <div class="absolute sm:left-0 md:left-auto md:right-0 mt-2 min-w-[250px] rounded-xl border border-border-muted bg-white shadow-xl p-3 z-40 origin-top scale-95 opacity-0 transform transition-all duration-200 ease-in-out group-open:opacity-100 group-open:scale-100">
-                            <p class="text-xs uppercase tracking-wide text-text-secondary mb-2">Productos y Servicios</p>
-                            <a href="/catalog" class="block w-full text-sm font-medium text-primary bg-surface-primary rounded-lg px-3 py-2 mb-2 hover:bg-surface-primary/50"> Ver todo el catálogo </a>
-                            {
-                                servicesCollections.length === 0 ? (
-                                    <p class="text-xs text-text-secondary">No hay colecciones disponibles.</p>
-                                ) : (
-                                    <ul class="flex flex-col gap-1">
-                                        {servicesCollections.map((collection) => (
-                                            <li>
-                                                <a href={`/catalog?collection_id=${collection.id ?? collection.handle}`} class="flex flex-col rounded-md px-3 py-2 hover:bg-surface-primary/40">
-                                                    {typeof collection.metadata?.text === "string" && <span class="text-xs text-text-secondary/80">{collection.metadata.text as string}</span>}
-                                                    <span class="text-sm font-medium text-text-primary">{collection.title ?? collection.handle ?? "Colección"}</span>
-                                                </a>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )
-                            }
-                        </div>
-                    </details>
-                </li>
-            </ul>
+  <nav class="w-full border-t border-border-muted bg-white">
+    <div
+      class="site-container flex flex-col md:flex-row items-stretch md:items-center justify-between py-3 gap-3"
+    >
+      <ul
+        class="flex flex-wrap items-center justify-between gap-3 md:gap-6 text-sm font-semibold text-text-primary w-full"
+      >
+        <div class="flex flex-wrap items-center gap-3 md:gap-6">
+          {
+            navLinks.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  class="inline-flex items-center gap-1 px-3 py-2 rounded-lg transition-colors duration-200 hover:bg-surface-primary/30 hover:text-primary"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
         </div>
-    </nav>
+
+        <li class="relative text-text-primary">
+          <details class="group peer" role="list">
+            <summary class="list-none">
+              <Button
+                shineAuto={true}
+                ariaLabel="Productos y Servicios"
+                as="div"
+                liftOnHover={false}
+              >
+                <div class="flex flex-row gap-2 items-center">
+                  <p class="text-white font-semibold text-sm">
+                    Productos y Servicios
+                  </p>
+
+                  <span
+                    class="transition-transform duration-300 group-open:rotate-180"
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        clip-rule="evenodd"
+                        d="M7.29289 9.29289C7.68342 8.90237 8.31658 8.90237 8.70711 9.29289L12 12.5858L15.2929 9.29289C15.6834 8.90237 16.3166 8.90237 16.7071 9.29289C17.0976 9.68342 17.0976 10.3166 16.7071 10.7071L12.7071 14.7071C12.5196 14.8946 12.2652 15 12 15C11.7348 15 11.4804 14.8946 11.2929 14.7071L7.29289 10.7071C6.90237 10.3166 6.90237 9.68342 7.29289 9.29289Z"
+                        fill="white"></path>
+                    </svg>
+                  </span>
+                </div></Button
+              >
+            </summary>
+
+            <div
+              class="absolute sm:left-0 md:left-auto md:right-0 mt-2 min-w-[250px] rounded-xl border border-border-muted bg-white shadow-xl p-3 z-40 origin-top scale-95 opacity-0 transform transition-all duration-200 ease-in-out group-open:opacity-100 group-open:scale-100"
+            >
+              <p
+                class="text-xs uppercase tracking-wide text-text-secondary mb-2"
+              >
+                Productos y Servicios
+              </p>
+              <a
+                href="/catalog"
+                class="block w-full text-sm font-medium text-primary bg-surface-primary rounded-lg px-3 py-2 mb-2 hover:bg-surface-primary/50"
+              >
+                Ver todo el catálogo
+              </a>
+              {
+                servicesCollections.length === 0 ? (
+                  <p class="text-xs text-text-secondary">
+                    No hay colecciones disponibles.
+                  </p>
+                ) : (
+                  <ul class="flex flex-col gap-1">
+                    {servicesCollections.map((collection) => (
+                      <li>
+                        <a
+                          href={`/catalog?collection_id=${collection.id ?? collection.handle}`}
+                          class="flex flex-col rounded-md px-3 py-2 hover:bg-surface-primary/40"
+                        >
+                          {typeof collection.metadata?.text === "string" && (
+                            <span class="text-xs text-text-secondary/80">
+                              {collection.metadata.text as string}
+                            </span>
+                          )}
+                          <span class="text-sm font-medium text-text-primary">
+                            {collection.title ??
+                              collection.handle ??
+                              "Colección"}
+                          </span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )
+              }
+            </div>
+          </details>
+        </li>
+      </ul>
+    </div>
+  </nav>
 </header>

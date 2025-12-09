@@ -1,10 +1,10 @@
 import type { StoreProduct } from "../../lib/medusajs/products";
-import { formatPrice } from "../../lib/medusajs/products";
 import {
   getProductThumbnail,
   getProductTitle,
-  resolveProductPricing,
-} from "../../lib/medusajs/pricing";
+  formatPrice,
+} from "../../lib/medusajs/products";
+import { resolveProductPricing } from "../../lib/medusajs/pricing";
 
 interface Props {
   product?: StoreProduct;
@@ -12,28 +12,28 @@ interface Props {
 }
 
 export function CardSkeleton() {
-    return (
-        <div
-            className="flex flex-col bg-white rounded-xl shadow-sm overflow-hidden w-full"
-            aria-hidden="true"
-        >
-            <div className="bg-surface-secondary/80 w-full h-[230px] skeleton-shimmer" />
-            <div className="p-4 flex flex-col gap-3">
-                <div className="h-4 w-3/4 rounded bg-surface-secondary/80 skeleton-shimmer" />
-                <div className="h-3 w-1/2 rounded bg-surface-secondary/70 skeleton-shimmer" />
-                <div className="flex gap-2">
-                    <div className="h-8 w-1/2 rounded bg-surface-secondary/90 skeleton-shimmer" />
-                    <div className="h-8 w-1/4 rounded bg-surface-secondary/40 skeleton-shimmer" />
-                </div>
-            </div>
+  return (
+    <div
+      className="flex flex-col bg-white rounded-xl shadow-sm overflow-hidden w-full"
+      aria-hidden="true"
+    >
+      <div className="bg-surface-secondary/80 w-full h-[230px] skeleton-shimmer" />
+      <div className="p-4 flex flex-col gap-3">
+        <div className="h-4 w-3/4 rounded bg-surface-secondary/80 skeleton-shimmer" />
+        <div className="h-3 w-1/2 rounded bg-surface-secondary/70 skeleton-shimmer" />
+        <div className="flex gap-2">
+          <div className="h-8 w-1/2 rounded bg-surface-secondary/90 skeleton-shimmer" />
+          <div className="h-8 w-1/4 rounded bg-surface-secondary/40 skeleton-shimmer" />
         </div>
-    )
+      </div>
+    </div>
+  );
 }
 
 export default function Card({ product, children }: Props) {
-    if (!product) {
-        return <CardSkeleton />
-    }
+  if (!product) {
+    return <CardSkeleton />;
+  }
 
   const pricing = resolveProductPricing(product);
   const image = getProductThumbnail(product);
@@ -58,18 +58,26 @@ export default function Card({ product, children }: Props) {
         />
       </div>
 
-            <div className="p-4 flex flex-col gap-2">
-                <p className="text-text-primary font-semibold text-sm line-clamp-2">{name}</p>
+      <div className="p-4 flex flex-col gap-2">
+        <p className="text-text-primary font-semibold text-sm line-clamp-2">
+          {name}
+        </p>
 
-                <div className="flex flex-col">
-                    <p className="text-lg font-bold text-text-primary opacity-85">{formattedPrice}</p>
-                    {formattedOriginalPrice && (
-                        <p className="text-xs text-text-secondary opacity-85 line-through">{formattedOriginalPrice}</p>
-                    )}
-                    {pricing.includesTax && (
-                        <p className="text-[11px] text-text-secondary opacity-85 mt-1">Precio incluye IVA</p>
-                    )}
-                </div>
+        <div className="flex flex-col">
+          <p className="text-lg font-bold text-text-primary opacity-85">
+            {formattedPrice}
+          </p>
+          {formattedOriginalPrice && (
+            <p className="text-xs text-text-secondary opacity-85 line-through">
+              {formattedOriginalPrice}
+            </p>
+          )}
+          {pricing.includesTax && (
+            <p className="text-[11px] text-text-secondary opacity-85 mt-1">
+              Precio incluye IVA
+            </p>
+          )}
+        </div>
 
         {children}
       </div>

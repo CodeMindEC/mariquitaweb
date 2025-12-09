@@ -11,10 +11,6 @@ overrides:
 importers:
 
   .:
-    dependencies:
-      pnpm:
-        specifier: ^10.25.0
-        version: 10.25.0
     devDependencies:
       turbo:
         specifier: ^2.6.3
@@ -121,7 +117,7 @@ importers:
         version: 2.11.3(@medusajs/framework@2.11.3(@medusajs/cli@2.11.3(@types/node@22.19.1))(@types/node@22.19.1)(ioredis@5.8.2)(vite@6.4.1(@types/node@22.19.1)(jiti@2.6.1)(lightningcss@1.30.2)(yaml@2.8.2)))
       '@medusajs/types':
         specifier: ^2.11.3
-        version: 2.11.3(ioredis@5.8.2)(vite@6.4.1(@types/node@22.19.1)(jiti@2.6.1)(lightningcss@1.30.2))
+        version: 2.11.3(ioredis@5.8.2)(vite@6.4.1(@types/node@22.19.1)(jiti@2.6.1)(lightningcss@1.30.2)(yaml@2.8.2))
       '@nanostores/persistent':
         specifier: ^1.2.0
         version: 1.2.0(nanostores@1.1.0)
@@ -6874,11 +6870,6 @@ packages:
   pluralize@8.0.0:
     resolution: {integrity: sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==}
     engines: {node: '>=4'}
-
-  pnpm@10.25.0:
-    resolution: {integrity: sha512-XoJjkCevN8+DIGG8xtY5whljRIjg8rrr54UCink957Ul/80/f/V09emGBlTgmP6FK6isXdXO/hdn0joCCpL1AQ==}
-    engines: {node: '>=18.12'}
-    hasBin: true
 
   pony-cause@2.1.11:
     resolution: {integrity: sha512-M7LhCsdNbNgiLYiP4WjsfLUuFmCfnjdF6jKe2R9NKl4WFN+HZPGHJZ9lnLP7f9ZnKe3U9nuWD0szirmj+migUg==}
@@ -17606,8 +17597,6 @@ snapshots:
       find-up: 4.1.0
 
   pluralize@8.0.0: {}
-
-  pnpm@10.25.0: {}
 
   pony-cause@2.1.11: {}
 

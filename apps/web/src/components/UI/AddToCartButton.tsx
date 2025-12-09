@@ -1,18 +1,17 @@
 import { addItem } from "../../stores/cart";
+import { resolveProductPricing } from "../../lib/medusajs/pricing";
+import type { StoreProduct } from "../../lib/medusajs/products";
 import {
   getProductThumbnail,
   getProductTitle,
-  resolveProductPricing,
-} from "../../lib/medusajs/pricing";
-import type { StoreProduct } from "../../lib/medusajs/products";
-import { formatPrice } from "../../lib/medusajs/products";
+  formatPrice,
+} from "../../lib/medusajs/products";
 
 export default function AddToCartButton({
   product,
 }: {
   product: StoreProduct;
 }) {
-
   const pricing = resolveProductPricing(product);
   const formattedPrice = formatPrice(pricing.price);
   function handleAdd() {
@@ -20,7 +19,7 @@ export default function AddToCartButton({
       console.error("El producto no tiene variantes disponibles.");
       return;
     }
-    
+
     addItem({
       product_id: product.id,
       variant_id: product.variants[0].id, // variante por defecto
