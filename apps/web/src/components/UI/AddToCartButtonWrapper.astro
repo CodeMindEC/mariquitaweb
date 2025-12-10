@@ -1,0 +1,6 @@
+---
+import AddToCartButton from "../UI/AddToCartButton.tsx";
+const { product } = Astro.props;
+---
+
+<AddToCartButton product={product} client:load />
