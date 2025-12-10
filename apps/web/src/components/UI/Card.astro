@@ -1,9 +1,6 @@
 ---
 import CardIsland from "./Card.tsx";
-import AddToCartButton from "../UI/AddToCartButton.tsx";
 const { product } = Astro.props;
 ---
 
-<CardIsland product={product}>
-  <AddToCartButton product={product} client:load />
-</CardIsland>
+<CardIsland product={product} client:load />

@@ -1,11 +1,18 @@
-import type { StoreProduct } from "../../lib/medusajs/products"
-import { formatPrice, getProductThumbnail, getProductTitle } from "../../lib/medusajs/products"
-import { resolveProductPricing } from "../../lib/medusajs/pricing"
-import type { MeiliProductHit } from "./search/types"
-import { parseMeiliPrice } from "./search/types"
+import type { ReactNode } from "react";
+import type { StoreProduct } from "../../lib/medusajs/products";
+import {
+    formatPrice,
+    getProductThumbnail,
+    getProductTitle,
+} from "../../lib/medusajs/products";
+import { resolveProductPricing } from "../../lib/medusajs/pricing";
+import AddToCartButton from "./AddToCartButton";
+import type { MeiliProductHit } from "./search/types";
+import { parseMeiliPrice } from "./search/types";
 
 interface Props {
-    product?: StoreProduct | MeiliProductHit | null
+    product?: StoreProduct | MeiliProductHit | null;
+    children?: ReactNode;
 }
 
 export function CardSkeleton() {
@@ -44,7 +51,7 @@ const buildHitPricing = (hit: MeiliProductHit) => {
     }
 }
 
-export default function Card({ product }: Props) {
+export default function Card({ product, children }: Props) {
     if (!product) {
         return <CardSkeleton />
     }
@@ -104,25 +111,33 @@ export default function Card({ product }: Props) {
                     </div>
                 </div>
 
-                <button className="mt-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition-all duration-300 hover:bg-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-                    Comprar ahora
-                    <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 16 16"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="transition-transform duration-300 group-hover:translate-x-0.5"
-                    >
-                        <path
-                            d="M3 8h10M9 4l4 4-4 4"
-                            stroke="currentColor"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        />
-                    </svg>
-                </button>
+                {children ? (
+                    <div className="mt-auto w-full">{children}</div>
+                ) : isHydratedProduct ? (
+                    <div className="mt-auto w-full">
+                        <AddToCartButton product={product} />
+                    </div>
+                ) : (
+                    <button className="mt-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition-all duration-300 hover:bg-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                        Comprar ahora
+                        <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 16 16"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="transition-transform duration-300 group-hover:translate-x-0.5"
+                        >
+                            <path
+                                d="M3 8h10M9 4l4 4-4 4"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            />
+                        </svg>
+                    </button>
+                )}
             </div>
         </article>
     )
