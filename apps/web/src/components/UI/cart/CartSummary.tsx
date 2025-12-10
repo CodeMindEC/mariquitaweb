@@ -1,9 +1,10 @@
 import { useStore } from "@nanostores/react";
-import { cartSubtotal } from "../../stores/cart";
+import { cartDeliveryFee, cartSubtotal } from "@stores/cart";
+import { formatPrice } from "@lib/medusajs/products";
 
 export default function CartSummary() {
   const subtotal = useStore(cartSubtotal);
-  const delivery = 2.5;
+  const delivery = useStore(cartDeliveryFee);
   const total = subtotal + delivery;
 
   return (
@@ -12,17 +13,17 @@ export default function CartSummary() {
 
       <div className="flex justify-between mb-2">
         <span>Subtotal</span>
-        <span>${subtotal.toFixed(2)}</span>
+        <span>{formatPrice(subtotal)}</span>
       </div>
 
       <div className="flex justify-between mb-2">
         <span>Envío</span>
-        <span>${delivery.toFixed(2)}</span>
+        <span>{formatPrice(delivery)}</span>
       </div>
 
       <div className="border-t pt-2 flex justify-between font-bold">
         <span>Total</span>
-        <span>${total.toFixed(2)}</span>
+        <span>{formatPrice(total)}</span>
       </div>
     </div>
   );

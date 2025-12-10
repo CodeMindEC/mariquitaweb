@@ -1,31 +1,32 @@
 import { useStore } from "@nanostores/react";
-import { cart } from "../../stores/cart";
-import { useEffect, useState } from "react";
+import { cartQuantityTotal } from "@stores/cart";
+import { useEffect, useRef, useState } from "react";
 
 export default function HeaderCartCount(): JSX.Element | null {
-  const items = useStore(cart);
+  const total = useStore(cartQuantityTotal);
   const [animate, setAnimate] = useState<boolean>(false);
-  const [prevTotal, setPrevTotal] = useState<number>(0);
-  const [showPulse, setShowPulse] = useState<boolean>(false);
-
-   const total: number = items.length;
+  const prevTotalRef = useRef<number>(0);
 
   useEffect(() => {
-    if (total !== prevTotal && total > 0) {
-      setAnimate(true);
-      setShowPulse(true);
-
-      const animTimer = setTimeout(() => setAnimate(false), 600);
-      const pulseTimer = setTimeout(() => setShowPulse(false), 1000);
-
-      setPrevTotal(total);
-
-      return () => {
-        clearTimeout(animTimer);
-        clearTimeout(pulseTimer);
-      };
+    const prevTotal = prevTotalRef.current;
+    if (total === 0) {
+      prevTotalRef.current = total;
+      setAnimate(false);
+      return;
     }
-  }, [total, prevTotal]);
+
+    if (total === prevTotal) {
+      return;
+    }
+
+    setAnimate(true);
+    const timer = setTimeout(() => setAnimate(false), 600);
+    prevTotalRef.current = total;
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [total]);
 
   if (total === 0) return null;
 

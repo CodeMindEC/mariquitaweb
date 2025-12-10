@@ -6,7 +6,7 @@ import {
     getProductTitle,
 } from "../../lib/medusajs/products";
 import { resolveProductPricing } from "../../lib/medusajs/pricing";
-import AddToCartButton from "./AddToCartButton";
+import AddToCartButton from "./cart/AddToCartButton";
 import type { MeiliProductHit } from "./search/types";
 import { parseMeiliPrice } from "./search/types";
 
@@ -70,9 +70,16 @@ export default function Card({ product, children }: Props) {
     const highlightLabel = isHydratedProduct
         ? product.collection?.title ?? product.type?.value ?? "Selección Mariquita"
         : product.collection_title ?? product.type_value ?? "Selección Mariquita"
+    const productIdentifier = isHydratedProduct
+        ? product.id
+        : product.objectID ?? product.id ?? product.title ?? "meili-hit"
 
     return (
-        <article className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-border-muted/60 bg-white shadow-[0_25px_40px_rgba(15,23,42,0.08)] transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[0_35px_60px_rgba(34,197,94,0.25)]">
+        <article
+            className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-border-muted/60 bg-white shadow-[0_25px_40px_rgba(15,23,42,0.08)] transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[0_35px_60px_rgba(34,197,94,0.25)]"
+            data-product-card
+            data-product-id={productIdentifier}
+        >
             <div className="relative h-[230px] w-full overflow-hidden transition-transform duration-500 ease-out will-change-transform group-hover:scale-[1.03]">
                 <div className="pointer-events-none absolute inset-0 overflow-hidden">
                     <div className="absolute inset-0 bg-linear-to-b from-black/10 via-transparent to-white/30 mix-blend-multiply opacity-70 transition-all duration-500 ease-out group-hover:opacity-90" />
@@ -88,6 +95,7 @@ export default function Card({ product, children }: Props) {
                     alt={name}
                     className="h-full w-full object-cover"
                     loading="lazy"
+                    data-product-image
                 />
             </div>
 

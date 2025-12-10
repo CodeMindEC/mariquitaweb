@@ -7,6 +7,10 @@
       "~/*": ["./src/*"],
       "@lib/*": ["./src/lib/*"],
       "@ui/*": ["./src/components/UI/*"],
+      "@layouts/*": ["./src/layouts/*"],
+      "@components/*": ["./src/components/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@stores/*": ["./src/stores/*"]
     }
   }
 }
