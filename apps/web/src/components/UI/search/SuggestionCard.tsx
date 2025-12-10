@@ -1,5 +1,5 @@
 import { formatPrice } from "../../../lib/medusajs/products"
-import type { MeiliProductHit } from "./types"
+import type { MeiliProductHit } from "../../../lib/meilisearch/types"
 
 interface Props {
     hit: MeiliProductHit

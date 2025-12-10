@@ -1,5 +1,5 @@
 ---
-import Card from "../../components/UI/Card.astro";
+import Card from "./Card.tsx";
 import { type StoreProduct } from "../../lib/medusajs/products";
 interface Props {
     title?: string;
@@ -49,7 +49,7 @@ const { title, focusText, buttonText, buttonHref = "/catalog", products = [], fo
                 {
                     products.map((p) => (
                         <div class="card-section__item min-w-[85%] shrink-0 snap-start sm:min-w-[260px] md:min-w-0 md:shrink md:snap-none">
-                            <Card product={p} />
+                            <Card product={p} client:load />
                         </div>
                     ))
                 }

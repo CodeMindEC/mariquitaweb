@@ -9442,7 +9442,7 @@ snapshots:
 
   '@babel/parser@7.25.6':
     dependencies:
-      '@babel/types': 7.25.6
+      '@babel/types': 7.28.5
 
   '@babel/parser@7.28.5':
     dependencies:
@@ -9557,7 +9557,7 @@ snapshots:
       '@babel/generator': 7.28.5
       '@babel/parser': 7.25.6
       '@babel/template': 7.27.2
-      '@babel/types': 7.25.6
+      '@babel/types': 7.28.5
       debug: 4.4.3(supports-color@8.1.1)
       globals: 11.12.0
     transitivePeerDependencies:
@@ -11531,7 +11531,7 @@ snapshots:
 
   '@oclif/config@1.18.2':
     dependencies:
-      '@oclif/errors': 1.3.5
+      '@oclif/errors': 1.3.6
       '@oclif/parser': 3.8.17
       debug: 4.4.3(supports-color@8.1.1)
       globby: 11.1.0
@@ -14466,11 +14466,11 @@ snapshots:
   '@types/body-parser@1.19.6':
     dependencies:
       '@types/connect': 3.4.38
-      '@types/node': 20.19.25
+      '@types/node': 22.19.1
 
   '@types/connect@3.4.38':
     dependencies:
-      '@types/node': 20.19.25
+      '@types/node': 22.19.1
 
   '@types/debug@4.1.12':
     dependencies:
@@ -14482,7 +14482,7 @@ snapshots:
 
   '@types/express-serve-static-core@4.19.7':
     dependencies:
-      '@types/node': 20.19.25
+      '@types/node': 22.19.1
       '@types/qs': 6.14.0
       '@types/range-parser': 1.2.7
       '@types/send': 1.2.1
@@ -14557,7 +14557,7 @@ snapshots:
 
   '@types/pg@8.6.1':
     dependencies:
-      '@types/node': 20.19.25
+      '@types/node': 22.19.1
       pg-protocol: 1.10.3
       pg-types: 2.2.0
 
@@ -14583,16 +14583,16 @@ snapshots:
   '@types/send@0.17.6':
     dependencies:
       '@types/mime': 1.3.5
-      '@types/node': 20.19.25
+      '@types/node': 22.19.1
 
   '@types/send@1.2.1':
     dependencies:
-      '@types/node': 20.19.25
+      '@types/node': 22.19.1
 
   '@types/serve-static@1.15.10':
     dependencies:
       '@types/http-errors': 2.0.5
-      '@types/node': 20.19.25
+      '@types/node': 22.19.1
       '@types/send': 0.17.6
 
   '@types/shimmer@1.2.0': {}
@@ -18095,7 +18095,7 @@ snapshots:
       '@protobufjs/path': 1.1.2
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
-      '@types/node': 20.19.25
+      '@types/node': 22.19.1
       long: 5.3.2
 
   proxy-addr@2.0.7:

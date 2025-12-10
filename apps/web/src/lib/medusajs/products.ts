@@ -2,6 +2,7 @@
 import type { HttpTypes } from "@medusajs/types"
 import { sdk } from "./medusaClient"
 import { cacheProducts } from "./product-cache"
+import { ensureRegionId, MEDUSA_DEFAULTS } from "./config"
 
 export type StoreProduct = HttpTypes.StoreProduct
 export type StoreProductCategory = HttpTypes.StoreProductCategory
@@ -43,26 +44,7 @@ const SEARCH_PRODUCT_FIELDS = [
     "collection",
 ]
 
-const envDefaults = {
-    regionId: import.meta.env.PUBLIC_MEDUSA_REGION_ID,
-    currencyCode: import.meta.env.PUBLIC_MEDUSA_CURRENCY_CODE || "USD",
-    language: import.meta.env.PUBLIC_DEFAULT_LANGUAGE ?? "es",
-}
-
-export const DEFAULT_LANGUAGE = envDefaults.language
-export const DEFAULT_CURRENCY = envDefaults.currencyCode
-export const DEFAULT_REGION_ID = envDefaults.regionId
 export const PRODUCT_FIELDS_QUERY = PRODUCT_DEFAULT_FIELDS.join(",")
-
-const ensureRegionId = (explicit?: string) => {
-    const regionId = explicit ?? envDefaults.regionId
-    if (!regionId) {
-        throw new Error(
-            "Falta PUBLIC_MEDUSA_REGION_ID en .env para poder calcular los precios.",
-        )
-    }
-    return regionId
-}
 
 const normalizePagination = (
     limit: number | undefined,
@@ -335,8 +317,8 @@ export async function searchProducts(
     }
 
     const regionId = ensureRegionId(params.region_id)
-    const currencyCode = params.currency_code ?? envDefaults.currencyCode
-    const language = params.language ?? envDefaults.language
+    const currencyCode = params.currency_code ?? MEDUSA_DEFAULTS.currencyCode
+    const language = params.language ?? MEDUSA_DEFAULTS.language
     const fields = params.fields ?? SEARCH_PRODUCT_FIELDS
 
     const query: Record<string, string | number | boolean | string[]> = {
@@ -382,12 +364,7 @@ export async function searchProducts(
     }
 }
 
-const priceFormatter = new Intl.NumberFormat("es-EC", {
-    style: "currency",
-    currency: envDefaults.currencyCode,
-})
-
-export const formatPrice = (amount: number) => priceFormatter.format(amount)
+export { DEFAULT_LANGUAGE, DEFAULT_CURRENCY, DEFAULT_REGION_ID, formatPrice } from "./config"
 
 export const getProductThumbnail = (product: StoreProduct) =>
     product.thumbnail ?? product.images?.[0]?.url ?? "/images/product-placeholder.jpg"

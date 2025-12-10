@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import { InstantSearch, Configure, useInstantSearch, useSearchBox } from "react-instantsearch"
 import SearchHitCard, { SuggestionSkeleton } from "./search/SuggestionCard"
-import type { MeiliProductHit } from "./search/types"
+import type { MeiliProductHit } from "../../lib/meilisearch/types"
 import { CloseIcon, SearchIcon } from "./search/icons"
 import { MEILISEARCH_PRODUCTS_INDEX, isSearchConfigured, searchClient } from "../../lib/meilisearch/searchClient"
 
