@@ -6,6 +6,7 @@ import Oferta from "../../assets/header/oferta.svg";
 import type { StoreCollection } from "../../lib/medusajs/products";
 import SearchBar from "./SearchBar";
 import Button from "./shared/Button.astro";
+import HeaderCartCount from "./HeaderCartCount";
 
 interface Props {
   collections?: StoreCollection[];
@@ -77,10 +78,11 @@ const navLinks = [
         class="flex-1 flex flex-row items-center sm:justify-end gap-2 md:gap-4 w-full"
       >
         <SearchBar client:load />
-        <a href="/shoppingcar">
+        <a href="/shoppingcar" class="relative inline-block">
           <Carrito
             class="w-10 h-10 cursor-pointer transition-transform duration-300 hover:scale-110"
           />
+          <HeaderCartCount client:load />
         </a>
       </div>
     </div>
