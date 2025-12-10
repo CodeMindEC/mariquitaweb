@@ -14,12 +14,14 @@
         "@medusajs/js-sdk": "^2.11.3",
         "@medusajs/store": "^2.11.3",
         "@medusajs/types": "^2.11.3",
+        "@meilisearch/instant-meilisearch": "^0.29.0",
         "@tailwindcss/vite": "^4.1.17",
         "astro": "^5.16.0",
         "lru-cache": "^11.0.1",
         "motion": "^12.23.25",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
+        "react-instantsearch": "^7.20.2",
         "tailwindcss": "^4.1.17"
     },
     "devDependencies": {

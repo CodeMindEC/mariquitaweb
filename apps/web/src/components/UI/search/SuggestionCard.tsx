@@ -1,9 +1,8 @@
-import type { StoreProduct } from "../../../lib/medusajs/products"
-import { formatPrice, getProductThumbnail, getProductTitle } from "../../../lib/medusajs/products"
-import { resolveProductPricing } from "../../../lib/medusajs/pricing"
+import { formatPrice } from "../../../lib/medusajs/products"
+import type { MeiliProductHit } from "./types"
 
 interface Props {
-    product: StoreProduct
+    hit: MeiliProductHit
     onNavigate: () => void
 }
 
@@ -23,15 +22,19 @@ export function SuggestionSkeleton() {
     )
 }
 
-export default function SuggestionCard({ product, onNavigate }: Props) {
-    const pricing = resolveProductPricing(product)
-    const formattedPrice = formatPrice(pricing.price)
-    const formattedOriginalPrice =
-        pricing.originalPrice !== null ? formatPrice(pricing.originalPrice) : null
-    const thumbnail = getProductThumbnail(product)
-    const title = getProductTitle(product)
-    const category = product.categories?.[0]?.name ?? product.collection?.title ?? null
-    const destination = `/products/${product.handle ?? product.id}`
+const FALLBACK_IMAGE = "/images/product-placeholder.jpg"
+
+export default function SuggestionCard({ hit, onNavigate }: Props) {
+    const title = hit.title ?? "Producto"
+    const description = hit.description ?? ""
+    const category = hit.category_names?.[0] ?? hit.tag_values?.[0] ?? null
+    const priceLabel = typeof hit.min_price === "number" ? formatPrice(hit.min_price) : null
+    const secondaryPriceLabel =
+        typeof hit.max_price === "number" && hit.max_price !== hit.min_price
+            ? formatPrice(hit.max_price)
+            : null
+    const destination = `/products/${hit.handle ?? hit.id ?? hit.objectID ?? ""}`
+    const thumbnail = hit.thumbnail || FALLBACK_IMAGE
 
     return (
         <a
@@ -41,11 +44,6 @@ export default function SuggestionCard({ product, onNavigate }: Props) {
         >
             <div className="relative aspect-square w-20 sm:w-24 overflow-hidden rounded-xl bg-surface-secondary">
                 <img src={thumbnail} alt={title} className="h-full w-full object-cover" loading="lazy" />
-                {pricing.discountLabel && (
-                    <span className="absolute right-2 top-2 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
-                        {pricing.discountLabel}
-                    </span>
-                )}
             </div>
 
             <div className="flex flex-1 flex-col gap-1">
@@ -53,16 +51,17 @@ export default function SuggestionCard({ product, onNavigate }: Props) {
                 {category && (
                     <span className="text-[11px] uppercase tracking-wide text-text-secondary/80">{category}</span>
                 )}
+                {description && (
+                    <p className="text-xs text-text-secondary/90 line-clamp-2">{description}</p>
+                )}
 
-                <div className="flex flex-wrap items-baseline gap-2 text-text-primary">
-                    <span className="text-base font-bold">{formattedPrice}</span>
-                    {formattedOriginalPrice && (
-                        <span className="text-xs text-text-secondary line-through">{formattedOriginalPrice}</span>
-                    )}
-                </div>
-
-                {pricing.includesTax && (
-                    <span className="text-[10px] text-text-secondary">Precio incluye impuestos</span>
+                {priceLabel && (
+                    <div className="flex flex-wrap items-baseline gap-2 text-text-primary">
+                        <span className="text-base font-bold">{priceLabel}</span>
+                        {secondaryPriceLabel && (
+                            <span className="text-xs text-text-secondary">hasta {secondaryPriceLabel}</span>
+                        )}
+                    </div>
                 )}
             </div>
         </a>

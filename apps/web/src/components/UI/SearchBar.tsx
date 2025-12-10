@@ -1,25 +1,63 @@
 import { AnimatePresence, LayoutGroup, motion } from "motion/react"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
-import SuggestionCard, { SuggestionSkeleton } from "./search/SuggestionCard"
+import { InstantSearch, Configure, useInstantSearch, useSearchBox } from "react-instantsearch"
+import SearchHitCard, { SuggestionSkeleton } from "./search/SuggestionCard"
+import type { MeiliProductHit } from "./search/types"
 import { CloseIcon, SearchIcon } from "./search/icons"
-import { useSearchSuggestions } from "./search/useSearchSuggestions"
+import { MEILISEARCH_PRODUCTS_INDEX, isSearchConfigured, searchClient } from "../../lib/meilisearch/searchClient"
 
 const SUGGESTION_LIMIT = 6
 
 export default function SearchBar() {
+    if (!isSearchConfigured || !searchClient) {
+        return (
+            <div className="flex w-full items-center gap-3 rounded-2xl border border-border-muted bg-white/80 px-3 py-2 text-left text-sm text-text-secondary shadow-sm">
+                <SearchIcon className="h-5 w-5 text-text-secondary" />
+                <input
+                    disabled
+                    placeholder="Búsqueda no disponible"
+                    className="flex-1 border-none bg-transparent text-sm text-text-secondary outline-none"
+                />
+            </div>
+        )
+    }
+
+    return (
+        <InstantSearch
+            searchClient={searchClient}
+            indexName={MEILISEARCH_PRODUCTS_INDEX}
+            future={{ preserveSharedStateOnUnmount: true }}
+        >
+            <Configure
+                hitsPerPage={SUGGESTION_LIMIT}
+                attributesToRetrieve={[
+                    'id',
+                    'objectID',
+                    'title',
+                    'description',
+                    'handle',
+                    'thumbnail',
+                    'min_price',
+                    'max_price',
+                    'currency_code',
+                    'category_names',
+                    'tag_values',
+                ]}
+                attributesToHighlight={[]}
+            />
+            <SearchOverlay />
+        </InstantSearch>
+    )
+}
+
+function SearchOverlay() {
     const [isClient, setIsClient] = useState(false)
     const [isActive, setIsActive] = useState(false)
     const inputRef = useRef<HTMLInputElement | null>(null)
-    const {
-        query,
-        setQuery,
-        results,
-        loading,
-        error,
-        hasSearched,
-        resetSuggestions,
-    } = useSearchSuggestions(SUGGESTION_LIMIT)
+    const { query, refine } = useSearchBox({})
+    const { status, error, results } = useInstantSearch()
+    const hits = (results?.hits ?? []) as MeiliProductHit[]
 
     useEffect(() => {
         setIsClient(true)
@@ -27,9 +65,8 @@ export default function SearchBar() {
 
     const closeSearch = useCallback(() => {
         setIsActive(false)
-        setQuery("")
-        resetSuggestions()
-    }, [resetSuggestions, setQuery])
+        refine("")
+    }, [refine])
 
     const openSearch = useCallback(() => {
         setIsActive(true)
@@ -85,9 +122,12 @@ export default function SearchBar() {
         return () => window.removeEventListener("keydown", handleShortcut)
     }, [isClient, openSearch])
 
+    const loading = status === "loading" || status === "stalled"
+    const errorMessage = error?.message ?? null
     const queryHasValue = query.trim().length > 0
-    const showSkeleton = loading && results.length === 0
-    const showEmptyState = !loading && !error && queryHasValue && results.length === 0 && hasSearched
+    const hasSearched = Boolean(results?.query?.trim()?.length)
+    const showSkeleton = loading && hits.length === 0
+    const showEmptyState = !loading && !errorMessage && queryHasValue && hits.length === 0 && hasSearched
 
     const collapsedField = (
         <motion.div
@@ -104,7 +144,7 @@ export default function SearchBar() {
             <input
                 ref={inputRef}
                 value={query}
-                onChange={(event) => setQuery(event.target.value)}
+                onChange={(event) => refine(event.target.value)}
                 onFocus={openSearch}
                 placeholder="Busca, elige y disfruta"
                 className="flex-1 border-none bg-transparent text-sm text-text-primary outline-none placeholder:text-text-secondary"
@@ -140,7 +180,7 @@ export default function SearchBar() {
                                 <input
                                     ref={inputRef}
                                     value={query}
-                                    onChange={(event) => setQuery(event.target.value)}
+                                    onChange={(event) => refine(event.target.value)}
                                     placeholder="¿Qué snack buscamos hoy?"
                                     className="flex-1 border-none bg-transparent text-base text-text-primary outline-none placeholder:text-text-secondary"
                                     aria-label="Buscar productos"
@@ -165,13 +205,13 @@ export default function SearchBar() {
                                     </div>
                                 )}
 
-                                {!loading && error && (
+                                {!loading && errorMessage && (
                                     <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-                                        {error}
+                                        {errorMessage}
                                     </div>
                                 )}
 
-                                {!loading && !error && !queryHasValue && (
+                                {!loading && !errorMessage && !queryHasValue && (
                                     <div className="rounded-2xl border border-dashed border-border-muted px-4 py-6 text-center text-sm text-text-secondary">
                                         Empieza a escribir para descubrir productos, categorías y servicios.
                                     </div>
@@ -183,10 +223,14 @@ export default function SearchBar() {
                                     </div>
                                 )}
 
-                                {(!loading || results.length > 0) && (
+                                {hits.length > 0 && (
                                     <div className="flex flex-col gap-3">
-                                        {results.map((product) => (
-                                            <SuggestionCard key={product.id} product={product} onNavigate={closeSearch} />
+                                        {hits.map((hit: MeiliProductHit) => (
+                                            <SearchHitCard
+                                                key={String(hit.id ?? hit.objectID)}
+                                                hit={hit}
+                                                onNavigate={closeSearch}
+                                            />
                                         ))}
                                     </div>
                                 )}

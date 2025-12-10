@@ -51,6 +51,7 @@ const envDefaults = {
 
 export const DEFAULT_LANGUAGE = envDefaults.language
 export const DEFAULT_CURRENCY = envDefaults.currencyCode
+export const DEFAULT_REGION_ID = envDefaults.regionId
 export const PRODUCT_FIELDS_QUERY = PRODUCT_DEFAULT_FIELDS.join(",")
 
 const ensureRegionId = (explicit?: string) => {
@@ -78,6 +79,8 @@ const emptyProducts = (limit: number, offset: number): ListProductsResponse => (
     limit,
     offset,
 })
+
+const emptyProductList = (): StoreProduct[] => []
 
 const emptyCategories = (limit: number, offset: number): ListProductCategoriesResponse => ({
     product_categories: [],
@@ -155,6 +158,33 @@ export async function listProducts(
             offset: response.offset ?? fallback.offset,
         }
     }, fallback)
+}
+
+export async function listProductsByIds(ids: string[], regionId?: string) {
+    const uniqueIds = Array.from(new Set(ids.filter((id): id is string => Boolean(id))))
+    if (!uniqueIds.length) {
+        return [] as StoreProduct[]
+    }
+
+    const resolvedRegionId = ensureRegionId(regionId)
+
+    return withFallback(
+        "listando productos por id",
+        async () => {
+            const response = await sdk.store.product.list({
+                id: uniqueIds,
+                limit: uniqueIds.length,
+                offset: 0,
+                region_id: resolvedRegionId,
+                fields: PRODUCT_FIELDS_QUERY,
+            })
+
+            const products = response.products ?? []
+            cacheProducts(products)
+            return products
+        },
+        emptyProductList(),
+    )
 }
 
 export async function listProductCategories(
