@@ -82,7 +82,7 @@ const initialResult = {
         <p class="text-text-secondary max-w-3xl">Filtra por categoría y ajusta el rango de precios para encontrar la combinación perfecta para ti.</p>
     </section>
 
-    <Container client:load categories={categories} collections={collections} tags={productTags} types={productTypes} initialResult={initialResult} initialCategoryIds={selectedCategoryIds} initialCollectionId={resolvedCollectionId ?? null} initialTagIds={selectedTagIds} initialTypeId={resolvedTypeId ?? null} initialMaxPrice={initialMaxPrice} />
+    <Container client:visible categories={categories} collections={collections} tags={productTags} types={productTypes} initialResult={initialResult} initialCategoryIds={selectedCategoryIds} initialCollectionId={resolvedCollectionId ?? null} initialTagIds={selectedTagIds} initialTypeId={resolvedTypeId ?? null} initialMaxPrice={initialMaxPrice} />
 
     <Footer />
 </Layout>

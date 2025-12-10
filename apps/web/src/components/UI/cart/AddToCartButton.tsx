@@ -1,14 +1,20 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { animate } from "motion";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { addItem } from "@stores/cart";
 import { resolveProductPricing } from "@lib/medusajs/pricing";
 import type { StoreProduct } from "@lib/medusajs/products";
-import {
-  getProductThumbnail,
-  getProductTitle,
-  formatPrice,
-} from "@lib/medusajs/products";
+import { getProductThumbnail, getProductTitle } from "@lib/medusajs/products";
+
+const SUCCESS_MESSAGES = [
+  "¡Buena elección!",
+  "¡Listo!",
+  "¡Perfecto!",
+  "¡Excelente!",
+  "¡Yummy!",
+  "¡ÑAM ÑAM!",
+  "¡A disfrutar!",
+];
 
 export default function AddToCartButton({
   product,
@@ -16,6 +22,7 @@ export default function AddToCartButton({
   product: StoreProduct;
 }) {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const confirmationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const shouldReduceMotion = usePrefersReducedMotion();
   const pricing = resolveProductPricing(product);
   const defaultVariant = product.variants?.[0];
@@ -23,11 +30,25 @@ export default function AddToCartButton({
   const isUnavailable = !defaultVariant;
   const productTitle = getProductTitle(product);
   const productThumbnail = getProductThumbnail(product);
-  const motionProps = shouldReduceMotion
+  const [confirmationMessage, setConfirmationMessage] = useState<string | null>(null);
+  const isConfirming = Boolean(confirmationMessage);
+  const motionProps = isUnavailable || shouldReduceMotion
     ? {}
     : {
       whileHover: { scale: 1.02, y: -1 },
       whileTap: { scale: 0.98, y: 0 },
+      animate: {
+        backgroundColor: isConfirming ? "#1f7c32" : "#22c55e",
+        boxShadow: isConfirming
+          ? "0 16px 32px rgba(31,124,50,0.55)"
+          : "0 8px 18px rgba(34,197,94,0.35)",
+        scale: isConfirming ? 1.02 : 1,
+      },
+      transition: {
+        backgroundColor: { duration: 0.18 },
+        boxShadow: { duration: 0.18 },
+        scale: { duration: 0.18 },
+      },
     };
 
   const triggerFlyAnimation = useCallback(() => {
@@ -104,12 +125,35 @@ export default function AddToCartButton({
     });
 
     triggerFlyAnimation();
+
+    if (confirmationTimeoutRef.current) {
+      clearTimeout(confirmationTimeoutRef.current);
+    }
+
+    const randomMessage = SUCCESS_MESSAGES[Math.floor(Math.random() * SUCCESS_MESSAGES.length)];
+    setConfirmationMessage(randomMessage);
+
+    confirmationTimeoutRef.current = setTimeout(() => {
+      setConfirmationMessage(null);
+      confirmationTimeoutRef.current = null;
+    }, 900);
   }, [defaultVariant, product.id, productTitle, productThumbnail, unitPrice, triggerFlyAnimation]);
+
+  useEffect(() => {
+    return () => {
+      if (confirmationTimeoutRef.current) {
+        clearTimeout(confirmationTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const IconComponent = isConfirming ? CheckIcon : CartIcon;
+  const buttonLabel = confirmationMessage ?? "Agregar al carrito";
   return (
     <motion.button
       {...motionProps}
       ref={buttonRef}
-      className={`group relative mt-2 inline-flex w-full items-center justify-center gap-3 overflow-hidden rounded-2xl px-5 py-3 text-sm font-semibold text-white transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${isUnavailable
+      className={`group relative mt-2 inline-flex w-full items-center justify-center gap-3 overflow-hidden rounded-2xl px-6 py-3 text-sm font-semibold text-white transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-16 ${isUnavailable
         ? "cursor-not-allowed bg-gray-400/80"
         : "cursor-pointer bg-primary shadow-[0_8px_18px_rgba(34,197,94,0.35)] hover:bg-[#1f7c32]"
         }`}
@@ -117,8 +161,35 @@ export default function AddToCartButton({
       aria-disabled={isUnavailable}
       onClick={handleAdd}
     >
-      <CartIcon />
-      <span className="text-base">Agregar al carrito</span>
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.span
+          key={isConfirming ? "confirming" : "default"}
+          className="inline-flex min-w-40 items-center justify-center gap-3"
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.16 }}
+        >
+          <motion.span
+            className="grid h-7 w-7 place-items-center rounded-full bg-white/10"
+            animate={{
+              scale: isConfirming ? 1.18 : 1,
+              rotate: isConfirming ? 8 : 0,
+              backgroundColor: isConfirming ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.1)",
+            }}
+            transition={{ duration: 0.2 }}
+            aria-hidden="true"
+          >
+            <IconComponent className="h-5 w-5 text-white" />
+          </motion.span>
+          <span
+            className="text-base font-semibold leading-tight text-center whitespace-nowrap"
+            aria-live="polite"
+          >
+            {buttonLabel}
+          </span>
+        </motion.span>
+      </AnimatePresence>
     </motion.button>
   );
 }
@@ -145,7 +216,11 @@ function usePrefersReducedMotion() {
   return prefers;
 }
 
-function CartIcon() {
+type IconProps = {
+  className?: string;
+};
+
+function CartIcon({ className = "text-white" }: IconProps) {
   return (
     <svg
       width="24"
@@ -153,7 +228,7 @@ function CartIcon() {
       viewBox="0 0 50 50"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="text-white"
+      className={className}
       aria-hidden="true"
     >
       <path
@@ -185,6 +260,28 @@ function CartIcon() {
         d="M29.4279 22.4896H35.205"
         stroke="currentColor"
         strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function CheckIcon({ className = "text-white" }: IconProps) {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-hidden="true"
+    >
+      <path
+        d="M20 6L9 17L4 12"
+        stroke="currentColor"
+        strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
       />

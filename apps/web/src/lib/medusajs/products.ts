@@ -21,6 +21,118 @@ export type StoreCollection = HttpTypes.StoreCollection
 export type ListCollectionsParams = HttpTypes.StoreCollectionListParams
 export type ListCollectionsResponse = HttpTypes.StoreCollectionListResponse
 
+const DEFAULT_COLLECTION_CACHE_TTL_MS = 60 * 1000
+const DEFAULT_REFERENCE_CACHE_TTL_MS = 60 * 1000
+
+const resolveTtl = (value: unknown, fallback: number) => {
+    const parsed = Number(value)
+    if (!Number.isFinite(parsed) || parsed < 0) {
+        return fallback
+    }
+    return parsed
+}
+
+const createCachedFetcher = <T>(ttlMsInput: number) => {
+    const ttlMs = resolveTtl(ttlMsInput, 0)
+    const cache = new Map<string, { value: T; expiresAt: number }>()
+    const pending = new Map<string, Promise<T>>()
+    const disabled = ttlMs <= 0
+
+    const fetchWithCache = async (
+        key: string,
+        loader: () => Promise<T>,
+        shouldCache?: (value: T) => boolean,
+    ): Promise<T> => {
+        if (disabled) {
+            return loader()
+        }
+
+        const now = Date.now()
+        const cached = cache.get(key)
+        if (cached && cached.expiresAt > now) {
+            return cached.value
+        }
+
+        const existingPromise = pending.get(key)
+        if (existingPromise) {
+            return existingPromise
+        }
+
+        const promise = loader()
+            .then((value) => {
+                if (!shouldCache || shouldCache(value)) {
+                    cache.set(key, { value, expiresAt: Date.now() + ttlMs })
+                }
+                return value
+            })
+            .finally(() => {
+                pending.delete(key)
+            })
+
+        pending.set(key, promise)
+        return promise
+    }
+
+    return {
+        fetchWithCache,
+        clear: () => {
+            cache.clear()
+            pending.clear()
+        },
+    }
+}
+
+const normalizeForKey = (value: unknown): unknown => {
+    if (Array.isArray(value)) {
+        return value.map(normalizeForKey)
+    }
+
+    if (value && typeof value === "object") {
+        return Object.keys(value as Record<string, unknown>)
+            .sort()
+            .reduce<Record<string, unknown>>((acc, key) => {
+                const normalizedValue = normalizeForKey(
+                    (value as Record<string, unknown>)[key],
+                )
+                if (typeof normalizedValue !== "undefined") {
+                    acc[key] = normalizedValue
+                }
+                return acc
+            }, {})
+    }
+
+    return value
+}
+
+const serializeCacheKey = (payload: Record<string, unknown>): string => {
+    const normalizedPayload = Object.keys(payload)
+        .sort()
+        .reduce<Record<string, unknown>>((acc, key) => {
+            const normalizedValue = normalizeForKey(payload[key])
+            if (typeof normalizedValue !== "undefined") {
+                acc[key] = normalizedValue
+            }
+            return acc
+        }, {})
+
+    return JSON.stringify(normalizedPayload)
+}
+
+const COLLECTION_CACHE_TTL_MS = resolveTtl(
+    import.meta.env.PUBLIC_COLLECTION_CACHE_TTL,
+    DEFAULT_COLLECTION_CACHE_TTL_MS,
+)
+
+const REFERENCE_CACHE_TTL_MS = resolveTtl(
+    import.meta.env.PUBLIC_MEDUSA_REFERENCE_CACHE_TTL,
+    DEFAULT_REFERENCE_CACHE_TTL_MS,
+)
+
+const collectionsCache = createCachedFetcher<ListCollectionsResponse>(COLLECTION_CACHE_TTL_MS)
+const categoriesCache = createCachedFetcher<ListProductCategoriesResponse>(REFERENCE_CACHE_TTL_MS)
+const tagsCache = createCachedFetcher<ListProductTagsResponse>(REFERENCE_CACHE_TTL_MS)
+const typesCache = createCachedFetcher<ListProductTypesResponse>(REFERENCE_CACHE_TTL_MS)
+
 const PRODUCT_DEFAULT_FIELDS = [
     "id",
     "title",
@@ -175,21 +287,31 @@ export async function listProductCategories(
     const { limit, offset } = normalizePagination(params.limit, params.offset, 50)
     const fallback = emptyCategories(limit, offset)
 
-    return withFallback("listando categorías", async () => {
-        const response = await sdk.store.category.list({
-            ...params,
-            limit,
-            offset,
-        })
+    const requestPayload: ListProductCategoriesParams = {
+        ...params,
+        limit,
+        offset,
+    }
 
-        return {
-            ...response,
-            product_categories: response.product_categories ?? [],
-            count: response.count ?? fallback.count,
-            limit: response.limit ?? fallback.limit,
-            offset: response.offset ?? fallback.offset,
-        }
-    }, fallback)
+    const loader = () =>
+        withFallback(
+            "listando categorías",
+            async () => {
+                const response = await sdk.store.category.list(requestPayload)
+
+                return {
+                    ...response,
+                    product_categories: response.product_categories ?? [],
+                    count: response.count ?? fallback.count,
+                    limit: response.limit ?? fallback.limit,
+                    offset: response.offset ?? fallback.offset,
+                }
+            },
+            fallback,
+        )
+
+    const cacheKey = serializeCacheKey(requestPayload as Record<string, unknown>)
+    return categoriesCache.fetchWithCache(cacheKey, loader, (result) => result !== fallback)
 }
 
 export async function listProductTags(
@@ -198,28 +320,35 @@ export async function listProductTags(
     const { limit, offset } = normalizePagination(params.limit, params.offset, 50)
     const fallback = emptyTags(limit, offset)
 
-    return withFallback("listando etiquetas", async () => {
-        const response = await sdk.client.fetch<ListProductTagsResponse>(
-            "/store/product-tags",
-            {
-                method: "GET",
-                headers: { Accept: "application/json" },
-                query: {
-                    ...params,
-                    limit,
-                    offset,
-                },
+    const requestQuery = {
+        ...params,
+        limit,
+        offset,
+    }
+
+    const loader = () =>
+        withFallback(
+            "listando etiquetas",
+            async () => {
+                const response = await sdk.client.fetch<ListProductTagsResponse>("/store/product-tags", {
+                    method: "GET",
+                    headers: { Accept: "application/json" },
+                    query: requestQuery,
+                })
+
+                return {
+                    ...response,
+                    product_tags: response.product_tags ?? [],
+                    count: response.count ?? fallback.count,
+                    limit: response.limit ?? fallback.limit,
+                    offset: response.offset ?? fallback.offset,
+                }
             },
+            fallback,
         )
 
-        return {
-            ...response,
-            product_tags: response.product_tags ?? [],
-            count: response.count ?? fallback.count,
-            limit: response.limit ?? fallback.limit,
-            offset: response.offset ?? fallback.offset,
-        }
-    }, fallback)
+    const cacheKey = serializeCacheKey(requestQuery as Record<string, unknown>)
+    return tagsCache.fetchWithCache(cacheKey, loader, (result) => result !== fallback)
 }
 
 export async function listProductTypes(
@@ -228,28 +357,35 @@ export async function listProductTypes(
     const { limit, offset } = normalizePagination(params.limit, params.offset, 50)
     const fallback = emptyTypes(limit, offset)
 
-    return withFallback("listando tipos", async () => {
-        const response = await sdk.client.fetch<ListProductTypesResponse>(
-            "/store/product-types",
-            {
-                method: "GET",
-                headers: { Accept: "application/json" },
-                query: {
-                    ...params,
-                    limit,
-                    offset,
-                },
+    const requestQuery = {
+        ...params,
+        limit,
+        offset,
+    }
+
+    const loader = () =>
+        withFallback(
+            "listando tipos",
+            async () => {
+                const response = await sdk.client.fetch<ListProductTypesResponse>("/store/product-types", {
+                    method: "GET",
+                    headers: { Accept: "application/json" },
+                    query: requestQuery,
+                })
+
+                return {
+                    ...response,
+                    product_types: response.product_types ?? [],
+                    count: response.count ?? fallback.count,
+                    limit: response.limit ?? fallback.limit,
+                    offset: response.offset ?? fallback.offset,
+                }
             },
+            fallback,
         )
 
-        return {
-            ...response,
-            product_types: response.product_types ?? [],
-            count: response.count ?? fallback.count,
-            limit: response.limit ?? fallback.limit,
-            offset: response.offset ?? fallback.offset,
-        }
-    }, fallback)
+    const cacheKey = serializeCacheKey(requestQuery as Record<string, unknown>)
+    return typesCache.fetchWithCache(cacheKey, loader, (result) => result !== fallback)
 }
 
 export async function listCollections(
@@ -259,109 +395,32 @@ export async function listCollections(
     const defaultFields = ["id", "title", "handle", "metadata"]
     const fallback = emptyCollections(limit, offset)
 
-    return withFallback("listando colecciones", async () => {
-        const response = await sdk.store.collection.list({
-            ...params,
-            limit,
-            offset,
-            fields: params.fields ?? defaultFields.join(","),
-        })
-
-        return {
-            ...response,
-            collections: response.collections ?? [],
-            count: response.count ?? fallback.count,
-            limit: response.limit ?? fallback.limit,
-            offset: response.offset ?? fallback.offset,
-        }
-    }, fallback)
-}
-
-export interface SearchProductsParams {
-    query: string
-    limit?: number
-    offset?: number
-    language?: string
-    region_id?: string
-    currency_code?: string
-    semanticSearch?: boolean
-    semanticRatio?: number
-    fields?: string[]
-    category_id?: string | string[]
-    collection_id?: string | string[]
-    status?: string
-}
-
-export interface SearchProductsResponse {
-    products: StoreProduct[]
-    count: number
-    limit: number
-    offset: number
-}
-
-const emptySearchResult = (limit: number, offset: number): SearchProductsResponse => ({
-    products: [],
-    count: 0,
-    limit,
-    offset,
-})
-
-export async function searchProducts(
-    params: SearchProductsParams,
-): Promise<SearchProductsResponse> {
-    const trimmedQuery = params.query?.trim()
-    const { limit, offset } = normalizePagination(params.limit, params.offset, 6)
-
-    if (!trimmedQuery) {
-        return emptySearchResult(limit, offset)
-    }
-
-    const regionId = ensureRegionId(params.region_id)
-    const currencyCode = params.currency_code ?? MEDUSA_DEFAULTS.currencyCode
-    const language = params.language ?? MEDUSA_DEFAULTS.language
-    const fields = params.fields ?? SEARCH_PRODUCT_FIELDS
-
-    const query: Record<string, string | number | boolean | string[]> = {
+    const requestPayload: HttpTypes.StoreCollectionListParams = {
+        ...params,
         limit,
         offset,
-        query: trimmedQuery,
-        language,
-        fields: fields.join(","),
-        region_id: regionId,
-        currency_code: currencyCode,
+        fields: params.fields ?? defaultFields.join(","),
     }
 
-    if (params.category_id) {
-        query.category_id = Array.isArray(params.category_id)
-            ? params.category_id
-            : [params.category_id]
-    }
+    const loader = () =>
+        withFallback(
+            "listando colecciones",
+            async () => {
+                const response = await sdk.store.collection.list(requestPayload)
 
-    if (typeof params.semanticSearch === "boolean") {
-        query.semanticSearch = params.semanticSearch
-    }
-
-    if (typeof params.semanticRatio === "number") {
-        query.semanticRatio = params.semanticRatio
-    }
-
-    const response = await sdk.client.fetch<SearchProductsResponse>(
-        "/store/meilisearch/products",
-        {
-            method: "GET",
-            headers: {
-                Accept: "application/json",
+                return {
+                    ...response,
+                    collections: response.collections ?? [],
+                    count: response.count ?? fallback.count,
+                    limit: response.limit ?? fallback.limit,
+                    offset: response.offset ?? fallback.offset,
+                }
             },
-            query,
-        },
-    )
+            fallback,
+        )
 
-    return {
-        products: response.products ?? [],
-        count: response.count ?? 0,
-        limit: response.limit ?? limit,
-        offset: response.offset ?? offset,
-    }
+    const cacheKey = serializeCacheKey(requestPayload as Record<string, unknown>)
+    return collectionsCache.fetchWithCache(cacheKey, loader, (result) => result !== fallback)
 }
 
 export { DEFAULT_LANGUAGE, DEFAULT_CURRENCY, DEFAULT_REGION_ID, formatPrice } from "./config"

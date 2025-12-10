@@ -57,7 +57,7 @@ const navLinks = [
 
             <!-- Search + Carrito -->
             <div class="flex-1 flex flex-row items-center sm:justify-end gap-2 md:gap-4 w-full">
-                <SearchBar client:load />
+                <SearchBar client:idle />
                 <a href="/cart" class="relative inline-block" data-cart-indicator>
                     <Carrito class="w-10 h-10 cursor-pointer transition-transform duration-300 hover:scale-110" />
                     <HeaderCartCount client:load />

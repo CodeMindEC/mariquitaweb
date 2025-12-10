@@ -1,0 +1,54 @@
+---
+import type { StoreCollection } from "../../../lib/medusajs/products";
+import CollectionSectionIsland from "./CollectionSectionIsland.astro";
+
+interface Props {
+    collections?: StoreCollection[];
+    sectionsLimit?: number;
+    productsPerSection?: number;
+}
+
+const { collections = [], sectionsLimit = 4, productsPerSection = 8 }: Props = Astro.props;
+
+const filteredCollections = collections.filter((collection) => Boolean(collection?.id || collection?.handle)).slice(0, sectionsLimit);
+---
+
+<section class="flex flex-col gap-8 py-8 sm:py-12">
+    <style>
+        .card-section__slider {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .card-section__slider::-webkit-scrollbar {
+            display: none;
+        }
+
+        .slider-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #d1d5db;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .slider-dot.active {
+            background-color: #299037;
+            width: 24px;
+            border-radius: 4px;
+        }
+
+        .slider-dot:hover {
+            background-color: #9ca3af;
+        }
+
+        .slider-dot.active:hover {
+            background-color: #207028;
+        }
+    </style>
+
+    {filteredCollections.length === 0 ? <div class="site-container rounded-xl border border-border-muted bg-surface-secondary/20 p-6 text-center text-sm text-text-secondary">No hay colecciones destacadas disponibles por ahora.</div> : filteredCollections.reverse().map((collection) => <CollectionSectionIsland collection={collection} productsPerSection={productsPerSection} />)}
+</section>

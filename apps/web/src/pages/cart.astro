@@ -13,7 +13,7 @@ import CartSummary from "@ui/cart/CartSummary.tsx";
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <h2 class="text-2xl font-bold text-gray-800 mb-6">Tu Carrito</h2>
 
-                    <CartListIsland client:load />
+                    <CartListIsland client:visible />
 
                     <div class="mt-6 pt-6 border-t border-gray-200">
                         <a href="/productos" class="text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-2">
@@ -25,7 +25,7 @@ import CartSummary from "@ui/cart/CartSummary.tsx";
 
             <!-- Totales -->
             <div class="lg:col-span-1">
-                <CartSummary client:load />
+                <CartSummary client:visible />
             </div>
         </div>
     </main>

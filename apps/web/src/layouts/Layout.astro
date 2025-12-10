@@ -1,12 +1,14 @@
 ---
 import Header from "../components/UI/Header.astro";
-import type { StoreCollection } from "../lib/medusajs/products";
+import { listCollections, type StoreCollection } from "../lib/medusajs/products";
 
 interface Props {
     collections?: StoreCollection[];
 }
 
-const { collections = [] }: Props = Astro.props;
+const { collections: initialCollections = [] }: Props = Astro.props;
+
+const collections = initialCollections.length ? initialCollections : ((await listCollections({ limit: 20 })).collections ?? []);
 ---
 
 <html lang="es" class="w-full h-full">

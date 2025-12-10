@@ -4,8 +4,14 @@ import { useEffect, useRef, useState } from "react";
 
 export default function HeaderCartCount(): JSX.Element | null {
   const total = useStore(cartQuantityTotal);
+  const [isClient, setIsClient] = useState(false);
   const [animate, setAnimate] = useState<boolean>(false);
   const prevTotalRef = useRef<number>(0);
+
+  useEffect(() => {
+    // Avoid rendering on the server to keep SSR and client markup in sync
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
     const prevTotal = prevTotalRef.current;
@@ -28,7 +34,7 @@ export default function HeaderCartCount(): JSX.Element | null {
     };
   }, [total]);
 
-  if (total === 0) return null;
+  if (!isClient || total === 0) return null;
 
   return (
     <span

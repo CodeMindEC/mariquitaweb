@@ -1,47 +1,18 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Hero from "../components/UI/Hero.astro";
-import CardSections from "../components/UI/CardSections.astro";
+import FeaturedCollections from "../components/UI/featured-collections/FeaturedCollections.astro";
 import Footer from "../components/UI/Footer.astro";
-import { listProducts, listCollections } from "../lib/medusajs/products";
+import { listCollections } from "../lib/medusajs/products";
 
-const [productsResponse, collectionsResponse] = await Promise.all([
-    listProducts({
-        limit: 12,
-        offset: 0,
-    }),
-    listCollections({ limit: 8 }),
-]);
-
-const products = productsResponse.products ?? [];
+const collectionsResponse = await listCollections({ limit: 8 });
 const collections = collectionsResponse.collections ?? [];
-
-const collectionSections = await Promise.all(
-    collections
-        .filter((collection) => Boolean(collection?.id))
-        .map(async (collection) => {
-            const metadataTitle = typeof collection.metadata?.text === "string" ? (collection.metadata.text as string) : null;
-            const focusText = collection.title ?? collection.handle ?? "Colección";
-
-            const response = await listProducts({
-                limit: 8,
-                collection_id: [collection.id as string],
-            });
-
-            return {
-                collection,
-                metadataTitle,
-                focusText,
-                products: response.products ?? [],
-            };
-        })
-);
 ---
 
 <Layout collections={collections}>
     <Hero />
 
-    {collectionSections.reverse().map(({ collection, metadataTitle, focusText, products: collectionProducts }) => <CardSections title={metadataTitle ?? "Colección destacada"} focusText={focusText} focusColor="#249b3e" buttonText="Ver más" buttonHref={`/catalog?collection_id=${collection.id ?? collection.handle}`} products={collectionProducts} />)}
+    <FeaturedCollections collections={collections} sectionsLimit={4} productsPerSection={8} />
 
     <Footer />
 </Layout>

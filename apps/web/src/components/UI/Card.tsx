@@ -12,7 +12,7 @@ interface Props {
 export function CardSkeleton() {
     return (
         <div
-            className="flex flex-col overflow-hidden rounded-3xl border border-border-muted/40 bg-white shadow-[0_15px_40px_rgba(15,23,42,0.06)]"
+            className="flex w-full min-w-60 flex-col overflow-hidden rounded-3xl border border-border-muted/40 bg-white shadow-[0_15px_40px_rgba(15,23,42,0.06)]"
             aria-hidden="true"
         >
             <div className="relative h-[230px] w-full overflow-hidden">
