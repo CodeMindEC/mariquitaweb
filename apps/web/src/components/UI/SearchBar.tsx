@@ -43,6 +43,16 @@ export default function SearchBar() {
                     'currency_code',
                     'category_names',
                     'tag_values',
+                    'collection_id',
+                    'collection_title',
+                    'type_id',
+                    'type_value',
+                    'variant_weights',
+                    'weight_price_map',
+                    'weight_thumbnail_map',
+                    'weight_for_min_price',
+                    'weight_for_max_price',
+                    'available_weights_text',
                 ]}
                 attributesToHighlight={[]}
             />

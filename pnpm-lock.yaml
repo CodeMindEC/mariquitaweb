@@ -136,6 +136,9 @@ importers:
       lru-cache:
         specifier: ^11.0.1
         version: 11.2.4
+      meilisearch:
+        specifier: ^0.54.0
+        version: 0.54.0
       motion:
         specifier: ^12.23.25
         version: 12.23.25(react-dom@19.2.0(react@19.2.0))(react@19.2.0)

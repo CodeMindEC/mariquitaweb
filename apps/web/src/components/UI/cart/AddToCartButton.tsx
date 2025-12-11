@@ -32,24 +32,6 @@ export default function AddToCartButton({
   const productThumbnail = getProductThumbnail(product);
   const [confirmationMessage, setConfirmationMessage] = useState<string | null>(null);
   const isConfirming = Boolean(confirmationMessage);
-  const motionProps = isUnavailable || shouldReduceMotion
-    ? {}
-    : {
-      whileHover: { scale: 1.02, y: -1 },
-      whileTap: { scale: 0.98, y: 0 },
-      animate: {
-        backgroundColor: isConfirming ? "#1f7c32" : "#22c55e",
-        boxShadow: isConfirming
-          ? "0 16px 32px rgba(31,124,50,0.55)"
-          : "0 8px 18px rgba(34,197,94,0.35)",
-        scale: isConfirming ? 1.02 : 1,
-      },
-      transition: {
-        backgroundColor: { duration: 0.18 },
-        boxShadow: { duration: 0.18 },
-        scale: { duration: 0.18 },
-      },
-    };
 
   const triggerFlyAnimation = useCallback(() => {
     if (typeof window === "undefined" || shouldReduceMotion) return;
@@ -150,12 +132,11 @@ export default function AddToCartButton({
   const IconComponent = isConfirming ? CheckIcon : CartIcon;
   const buttonLabel = confirmationMessage ?? "Agregar al carrito";
   return (
-    <motion.button
-      {...motionProps}
+    <button
       ref={buttonRef}
-      className={`group relative mt-2 inline-flex w-full items-center justify-center gap-3 overflow-hidden rounded-2xl px-6 py-3 text-sm font-semibold text-white transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-16 ${isUnavailable
+      className={`group relative mt-2 inline-flex w-full items-center justify-center gap-3 overflow-hidden rounded-2xl px-6 py-3 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-16 transition-all duration-150 ${isUnavailable
         ? "cursor-not-allowed bg-gray-400/80"
-        : "cursor-pointer bg-primary shadow-[0_8px_18px_rgba(34,197,94,0.35)] hover:bg-[#1f7c32]"
+        : `cursor-pointer hover:scale-[1.02] hover:-translate-y-0.5 active:scale-[0.98] active:translate-y-0 ${isConfirming ? "bg-secondary scale-[1.02] shadow-[0_16px_32px_color-mix(in_srgb,var(--color-secondary)_55%,transparent)]" : "bg-primary hover:bg-secondary shadow-[0_8px_18px_color-mix(in_srgb,var(--color-primary)_35%,transparent)]"}`
         }`}
       disabled={isUnavailable}
       aria-disabled={isUnavailable}
@@ -170,18 +151,12 @@ export default function AddToCartButton({
           exit={{ opacity: 0, y: -6 }}
           transition={{ duration: 0.16 }}
         >
-          <motion.span
-            className="grid h-7 w-7 place-items-center rounded-full bg-white/10"
-            animate={{
-              scale: isConfirming ? 1.18 : 1,
-              rotate: isConfirming ? 8 : 0,
-              backgroundColor: isConfirming ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.1)",
-            }}
-            transition={{ duration: 0.2 }}
+          <span
+            className={`grid h-7 w-7 place-items-center rounded-full transition-all duration-200 ${isConfirming ? "scale-[1.18] rotate-[8deg]" : "scale-100 rotate-0"}`}
             aria-hidden="true"
           >
             <IconComponent className="h-5 w-5 text-white" />
-          </motion.span>
+          </span>
           <span
             className="text-base font-semibold leading-tight text-center whitespace-nowrap"
             aria-live="polite"
@@ -190,7 +165,7 @@ export default function AddToCartButton({
           </span>
         </motion.span>
       </AnimatePresence>
-    </motion.button>
+    </button>
   );
 }
 

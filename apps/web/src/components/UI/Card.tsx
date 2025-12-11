@@ -58,10 +58,15 @@ export default function Card({ product, children }: Props) {
                         {viewModel.pricing.discountLabel}
                     </div>
                 )}
+                {viewModel.weightText && (
+                    <div className="absolute left-4 top-4 inline-flex items-center justify-center rounded-full bg-white/90 backdrop-blur-sm px-3 py-1.5 text-xs font-bold text-text-primary shadow-md border border-border-muted/30">
+                        {viewModel.weightText}
+                    </div>
+                )}
                 <img
                     src={viewModel.image}
                     alt={viewModel.name}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-cover bg-surface-secondary/35"
                     loading="lazy"
                     data-product-image
                 />

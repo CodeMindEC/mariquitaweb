@@ -3,42 +3,16 @@ import Layout from "../layouts/Layout.astro";
 import Footer from "../components/UI/Footer.astro";
 import Container from "../components/UI/Container.tsx";
 import { listProductCategories, listProducts, listCollections, listProductTags, listProductTypes } from "../lib/medusajs/products";
-import { resolveProductPricing } from "../lib/medusajs/pricing";
+import { computePriceRangeFromProducts } from "../lib/meilisearch/converters";
+import { parseIdList, parsePositiveNumber } from "../lib/utils";
 
 const url = new URL(Astro.request.url);
 
-const getIdList = (...keys: (string | null | undefined)[]) =>
-    keys
-        .filter(Boolean)
-        .flatMap((key) => url.searchParams.getAll(key as string))
-        .flatMap((value) => value.split(","))
-        .map((value) => value.trim())
-        .filter(Boolean);
-
-const toPositiveNumber = (value: string | null) => {
-    if (!value) return null;
-    const parsed = Number(value);
-    return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
-};
-
-const computePriceRange = (products: import("../lib/medusajs/products").StoreProduct[]) => {
-    const prices = products.map((product) => resolveProductPricing(product).price).filter((price) => typeof price === "number" && price >= 0);
-
-    if (!prices.length) {
-        return { min: 0, max: 100 };
-    }
-
-    return {
-        min: Math.max(0, Math.floor(Math.min(...prices))),
-        max: Math.max(1, Math.ceil(Math.max(...prices))),
-    };
-};
-
-const selectedCategoryIds = getIdList("category_id");
-const selectedTagIds = getIdList("tag", "tag_id", "tags");
-const [collectionCandidate] = getIdList("collection_id", "collection");
-const [typeCandidate] = getIdList("type_id", "type");
-const initialMaxPrice = toPositiveNumber(url.searchParams.get("max_price"));
+const selectedCategoryIds = parseIdList(url, "category_id");
+const selectedTagIds = parseIdList(url, "tag", "tag_id", "tags");
+const [collectionCandidate] = parseIdList(url, "collection_id", "collection");
+const [typeCandidate] = parseIdList(url, "type_id", "type");
+const initialMaxPrice = parsePositiveNumber(url.searchParams.get("max_price"));
 
 const [categoriesResponse, collectionsResponse, tagsResponse, typesResponse] = await Promise.all([listProductCategories({ limit: 50 }), listCollections({ limit: 20 }), listProductTags({ limit: 100 }), listProductTypes({ limit: 50 })]);
 
@@ -71,7 +45,7 @@ const initialResultData = await listProducts({
 
 const initialResult = {
     ...initialResultData,
-    priceRange: computePriceRange(initialResultData.products ?? []),
+    priceRange: computePriceRangeFromProducts(initialResultData.products ?? []),
 };
 ---
 

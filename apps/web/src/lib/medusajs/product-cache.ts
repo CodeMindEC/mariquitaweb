@@ -4,6 +4,10 @@ import type { StoreProduct } from "./products"
 const DEFAULT_TTL_MS = Number(import.meta.env.PUBLIC_PRODUCT_CACHE_TTL ?? 1000 * 60)
 const MAX_CACHE_ITEMS = Number(import.meta.env.PUBLIC_PRODUCT_CACHE_MAX ?? 500)
 
+/**
+ * Caché LRU para productos individuales
+ * Usa Least Recently Used para mantener los productos más accedidos
+ */
 const productCache = new LRUCache<string, StoreProduct>({
     max: Math.max(1, MAX_CACHE_ITEMS),
     ttl: Math.max(0, DEFAULT_TTL_MS),
@@ -11,6 +15,9 @@ const productCache = new LRUCache<string, StoreProduct>({
     updateAgeOnGet: true,
 })
 
+/**
+ * Cachea múltiples productos
+ */
 export const cacheProducts = (products: StoreProduct[], ttlMs = DEFAULT_TTL_MS) => {
     if (!Array.isArray(products) || !products.length) {
         return
@@ -22,6 +29,9 @@ export const cacheProducts = (products: StoreProduct[], ttlMs = DEFAULT_TTL_MS) 
     })
 }
 
+/**
+ * Obtiene un producto del caché
+ */
 export const getCachedProduct = (id: string) => {
     return productCache.get(id) ?? null
 }
@@ -30,6 +40,9 @@ interface HydrateOptions {
     cacheTtlMs?: number
 }
 
+/**
+ * Hidrata una lista de productos usando el caché y obteniendo los faltantes
+ */
 export const hydrateProducts = async (
     products: StoreProduct[],
     fetchMissing: (ids: string[]) => Promise<StoreProduct[]>,
@@ -71,4 +84,7 @@ export const hydrateProducts = async (
     })
 }
 
+/**
+ * Limpia todo el caché de productos
+ */
 export const clearProductCache = () => productCache.clear()
