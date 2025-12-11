@@ -1,0 +1,217 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Footer from "../components/UI/Footer.astro";
+import CheckoutSummary from "@ui/cart/CheckoutSummary.tsx";
+---
+
+<Layout>
+  <main class="max-w-6xl mx-auto px-2 sm:px-4 py-8 sm:py-12">
+    <!-- Header -->
+    <div class="text-center mb-10 sm:mb-14 pb-6 border-b-2 border-yellow-400">
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
+        Finaliza tu compra
+      </h1>
+      <p class="text-gray-600 text-sm sm:text-base">Completa el formulario para procesar tu pedido</p>
+    </div>
+
+    <!-- Contenedor principal con dos columnas -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-10">
+      <!-- Formulario (2 columnas) -->
+      <div class="lg:col-span-2">
+        <form class="space-y-6 sm:space-y-8" id="checkout-form" method="POST" action="/api/checkout">
+          <!-- Datos personales -->
+          <div class="bg-white rounded-lg p-6 sm:p-7 shadow-md border-l-4 border-green-600">
+            <div class="flex items-center gap-3 mb-5">
+              <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-green-600 text-white font-bold text-sm">1</span>
+              <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Datos personales</h2>
+            </div>
+            <div class="space-y-4">
+              <input
+                required
+                name="nombre"
+                type="text"
+                placeholder="Nombre completo"
+                class="w-full border border-gray-300 rounded-lg px-4 py-3 text-base bg-white hover:border-green-400 focus:border-green-600 focus:ring-1 focus:ring-green-600 focus:outline-none transition"
+              />
+              <input
+                required
+                name="email"
+                type="email"
+                placeholder="Correo electrónico"
+                class="w-full border border-gray-300 rounded-lg px-4 py-3 text-base bg-white hover:border-green-400 focus:border-green-600 focus:ring-1 focus:ring-green-600 focus:outline-none transition"
+              />
+              <input
+                required
+                name="telefono"
+                type="tel"
+                placeholder="Teléfono"
+                class="w-full border border-gray-300 rounded-lg px-4 py-3 text-base bg-white hover:border-green-400 focus:border-green-600 focus:ring-1 focus:ring-green-600 focus:outline-none transition"
+              />
+              <input
+                required
+                name="cedula"
+                type="text"
+                placeholder="Cédula de identidad"
+                class="w-full border border-gray-300 rounded-lg px-4 py-3 text-base bg-white hover:border-green-400 focus:border-green-600 focus:ring-1 focus:ring-green-600 focus:outline-none transition"
+              />
+            </div>
+          </div>
+
+          <!-- Dirección de envío -->
+          <div class="bg-white rounded-lg p-6 sm:p-7 shadow-md border-l-4 border-green-600">
+            <div class="flex items-center gap-3 mb-5">
+              <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-green-600 text-white font-bold text-sm">2</span>
+              <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Dirección de envío</h2>
+            </div>
+            <div class="space-y-4">
+              <input
+                required
+                name="direccion"
+                type="text"
+                placeholder="Dirección"
+                class="w-full border border-gray-300 rounded-lg px-4 py-3 text-base bg-white hover:border-green-400 focus:border-green-600 focus:ring-1 focus:ring-green-600 focus:outline-none transition"
+              />
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <input
+                  required
+                  name="ciudad"
+                  type="text"
+                  placeholder="Ciudad"
+                  class="w-full border border-gray-300 rounded-lg px-4 py-3 text-base bg-white hover:border-green-400 focus:border-green-600 focus:ring-1 focus:ring-green-600 focus:outline-none transition"
+                />
+                <input
+                  required
+                  name="provincia"
+                  type="text"
+                  placeholder="Provincia/Estado"
+                  class="w-full border border-gray-300 rounded-lg px-4 py-3 text-base bg-white hover:border-green-400 focus:border-green-600 focus:ring-1 focus:ring-green-600 focus:outline-none transition"
+                />
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <input
+                  required
+                  name="codigo_postal"
+                  type="text"
+                  placeholder="Código postal"
+                  class="w-full border border-gray-300 rounded-lg px-4 py-3 text-base bg-white hover:border-green-400 focus:border-green-600 focus:ring-1 focus:ring-green-600 focus:outline-none transition"
+                />
+                <input
+                  name="referencia"
+                  type="text"
+                  placeholder="Referencia (opcional)"
+                  class="w-full border border-gray-300 rounded-lg px-4 py-3 text-base bg-white hover:border-green-400 focus:border-green-600 focus:ring-1 focus:ring-green-600 focus:outline-none transition"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Método de pago -->
+          <div class="bg-white rounded-lg p-6 sm:p-7 shadow-md border-l-4 border-green-600">
+            <div class="flex items-center gap-3 mb-5">
+              <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-green-600 text-white font-bold text-sm">3</span>
+              <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Método de pago</h2>
+            </div>
+            <div class="space-y-3">
+              <label class="block">
+                <input
+                  required
+                  type="radio"
+                  name="pago"
+                  value="tarjeta"
+                  class="peer hidden"
+                />
+                <div class="peer-checked:ring-2 peer-checked:ring-green-400 peer-checked:border-green-600 peer-checked:bg-green-50 border-2 border-gray-300 rounded-lg p-4 cursor-pointer hover:border-green-400 transition flex items-center gap-3">
+                  <div class="peer-checked:bg-green-600 peer-checked:border-green-600 w-6 h-6 border-2 border-gray-400 rounded-full flex items-center justify-center shrink-0 bg-white">
+                    <svg class="w-4 h-4 text-white hidden peer-checked:block" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="font-semibold text-gray-900">Tarjeta de crédito/débito</p>
+                    <p class="text-sm text-gray-500">Visa, Mastercard, American Express</p>
+                  </div>
+                </div>
+              </label>
+
+              <label class="block">
+                <input
+                  type="radio"
+                  name="pago"
+                  value="transferencia"
+                  class="peer hidden"
+                />
+                <div class="peer-checked:ring-2 peer-checked:ring-green-400 peer-checked:border-green-600 peer-checked:bg-green-50 border-2 border-gray-300 rounded-lg p-4 cursor-pointer hover:border-green-400 transition flex items-center gap-3">
+                  <div class="peer-checked:bg-green-600 peer-checked:border-green-600 w-6 h-6 border-2 border-gray-400 rounded-full flex items-center justify-center shrink-0 bg-white">
+                    <svg class="w-4 h-4 text-white hidden peer-checked:block" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="font-semibold text-gray-900">Transferencia bancaria</p>
+                    <p class="text-sm text-gray-500">Depósito directo a tu banco</p>
+                  </div>
+                </div>
+              </label>
+
+              <label class="block">
+                <input
+                  type="radio"
+                  name="pago"
+                  value="efectivo"
+                  class="peer hidden"
+                />
+                <div class="peer-checked:ring-2 peer-checked:ring-green-400 peer-checked:border-green-600 peer-checked:bg-green-50 border-2 border-gray-300 rounded-lg p-4 cursor-pointer hover:border-green-400 transition flex items-center gap-3">
+                  <div class="peer-checked:bg-green-600 peer-checked:border-green-600 w-6 h-6 border-2 border-gray-400 rounded-full flex items-center justify-center shrink-0 bg-white">
+                    <svg class="w-4 h-4 text-white hidden peer-checked:block" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="font-semibold text-gray-900">Pago contra entrega</p>
+                    <p class="text-sm text-gray-500">Paga cuando recibas tu pedido</p>
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Resumen lateral (1 columna) con el componente CheckoutSummary -->
+      <div class="lg:col-span-1">
+        <div class="sticky top-24">
+          <CheckoutSummary client:only="react" />
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  /* Estilos para el radio button personalizado */
+  input[type="radio"][name="pago"]:checked + div .peer-checked\:bg-green-600 {
+    background-color: #16a34a;
+    border-color: #16a34a;
+  }
+
+  input[type="radio"][name="pago"] + div svg {
+    display: none !important;
+  }
+
+  input[type="radio"][name="pago"]:checked + div svg {
+    display: block !important;
+  }
+
+  /* Asegurar que el checkmark sea visible */
+  input[type="radio"][name="pago"]:checked + div .w-6.h-6 {
+    background-color: #16a34a;
+    border-color: #16a34a;
+  }
+
+  input[type="radio"][name="pago"]:checked + div .w-6.h-6 svg {
+    display: block;
+    visibility: visible;
+  }
+</style>
