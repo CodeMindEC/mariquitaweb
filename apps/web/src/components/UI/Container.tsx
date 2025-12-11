@@ -71,7 +71,7 @@ export default function Container({
     )
     const [selectedTags, setSelectedTags] = useState<string[]>(sanitizedInitialTags)
     const [selectedType, setSelectedType] = useState<string | null>(initialTypeId ?? null)
-    const [selectedWeight, setSelectedWeight] = useState<string | null>(null)
+    const [selectedWeight, setSelectedWeight] = useState<number | null>(null)
     const [maxPrice, setMaxPrice] = useState<number>(() =>
         clampPrice(initialMaxPrice, initialPriceBounds.max),
     )
@@ -224,7 +224,7 @@ export default function Container({
         setSelectedWeight(null)
     }
 
-    const handleWeightSelect = (weight: string | null) => {
+    const handleWeightSelect = (weight: number | null) => {
         setSelectedWeight(weight)
     }
 

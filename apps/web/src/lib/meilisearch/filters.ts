@@ -7,7 +7,7 @@ export interface CatalogFilters {
     collectionId: string | null
     tagIds: string[]
     typeIds: string[]
-    weight?: string | null
+    weight?: number | null
     status?: string
 }
 
@@ -56,12 +56,10 @@ const buildTypeFilter = (typeIds: string[]): string | null => {
 }
 
 /**
- * Construye el string de filtro para variante por título
+ * Construye el string de filtro para peso/variante (usa peso numérico filterable)
  */
-const buildWeightFilter = (weight?: string | null): string | null => {
-    return (weight !== undefined && weight !== null && weight.trim())
-        ? `available_weights_text = "${weight.trim()}"`
-        : null
+const buildWeightFilter = (weight?: number | null): string | null => {
+    return (weight !== undefined && weight !== null) ? `variant_weights = ${weight}` : null
 }
 
 /**

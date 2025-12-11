@@ -2,7 +2,7 @@ import { useEffect, useState, type ReactNode } from "react"
 import type { HttpTypes } from "@medusajs/types"
 import type { StoreCollection } from "../../../lib/medusajs/products"
 import { formatPrice } from "../../../lib/medusajs/products"
-import { getAvailableWeightsForCollection } from "../../../lib/meilisearch/queries"
+import { getAvailableWeightsForCollection, type VariantMapping } from "../../../lib/meilisearch/queries"
 import { meiliClient, isSearchConfigured } from "../../../lib/meilisearch/searchClient"
 import FilterIcon from "../../../assets/Container/filter.svg"
 import DownIcon from "../../../assets/Container/down.svg"
@@ -30,7 +30,7 @@ interface FilterSidebarProps {
     selectedCollection: string | null
     selectedTags: string[]
     selectedType: string | null
-    selectedWeight: string | null
+    selectedWeight: number | null
     hasActiveFilters: boolean
     activeFilterCount: number
     maxPrice: number
@@ -39,7 +39,7 @@ interface FilterSidebarProps {
     onCollectionSelect(collectionId: string | null): void
     onTagToggle(tagId: string): void
     onTypeSelect(typeId: string | null): void
-    onWeightSelect(weight: string | null): void
+    onWeightSelect(weight: number | null): void
     onPriceChange(value: number): void
 }
 
@@ -88,7 +88,7 @@ export default function FilterSidebar({
     onWeightSelect,
     onPriceChange,
 }: FilterSidebarProps) {
-    const [availableWeights, setAvailableWeights] = useState<string[]>([])
+    const [availableWeights, setAvailableWeights] = useState<VariantMapping[]>([])
     const [loadingWeights, setLoadingWeights] = useState(false)
 
     // Cargar variantes disponibles cuando se selecciona una colección
@@ -218,14 +218,14 @@ export default function FilterSidebar({
                                         {/* Dropdown de variantes cuando la colección está activa */}
                                         {isActive && availableWeights.length > 0 && (
                                             <div className="ml-4 flex flex-col gap-1 pl-2 border-l-2 border-surface-primary">
-                                                {availableWeights.map((variantTitle) => (
+                                                {availableWeights.map((variant) => (
                                                     <button
-                                                        key={variantTitle}
+                                                        key={variant.weight}
                                                         type="button"
-                                                        className={`rounded-xl px-3 py-1.5 text-left text-xs transition ${selectedWeight === variantTitle ? "bg-primary/10 text-primary" : "text-text-secondary hover:bg-surface-primary/60"}`}
-                                                        onClick={() => onWeightSelect(variantTitle)}
+                                                        className={`rounded-xl px-3 py-1.5 text-left text-xs transition ${selectedWeight === variant.weight ? "bg-primary/10 text-primary" : "text-text-secondary hover:bg-surface-primary/60"}`}
+                                                        onClick={() => onWeightSelect(variant.weight)}
                                                     >
-                                                        {variantTitle}
+                                                        {variant.title}
                                                     </button>
                                                 ))}
                                             </div>

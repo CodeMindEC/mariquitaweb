@@ -23,16 +23,7 @@ const findWeightFromTitle = (hit: MeiliProductHit, variantTitle: string): number
 /**
  * Selecciona el precio y peso a mostrar según el contexto
  */
-const selectDisplayData = (hit: MeiliProductHit, selectedVariant?: string | null) => {
-    // Si hay una variante seleccionada por título, encontrar su peso numérico
-    let selectedWeight: number | null = null
-    let selectedTitle: string | null = null
-
-    if (selectedVariant) {
-        selectedWeight = findWeightFromTitle(hit, selectedVariant)
-        selectedTitle = selectedVariant
-    }
-
+const selectDisplayData = (hit: MeiliProductHit, selectedWeight?: number | null, selectedTitle?: string | null) => {
     // Si hay un peso seleccionado y existe en el mapa, usar ese precio y thumbnail
     if (selectedWeight && hit.weight_price_map?.[selectedWeight] !== undefined) {
         return {
@@ -92,10 +83,19 @@ const createFakeVariant = (displayData: ReturnType<typeof selectDisplayData>, hi
 /**
  * Convierte un hit de Meilisearch a un StoreProduct
  * @param hit - Hit de Meilisearch
- * @param selectedVariant - Título de variante seleccionada para mostrar (opcional)
+ * @param selectedWeight - Peso numérico seleccionado para filtrar (opcional)
  */
-export const convertMeiliHitToProduct = (hit: MeiliProductHit, selectedVariant?: string | null): StoreProduct => {
-    const displayData = selectDisplayData(hit, selectedVariant)
+export const convertMeiliHitToProduct = (hit: MeiliProductHit, selectedWeight?: number | null): StoreProduct => {
+    // Si hay un peso seleccionado, encontrar su título
+    let selectedTitle: string | null = null
+    if (selectedWeight && hit.variant_weights && hit.available_weights_text) {
+        const index = hit.variant_weights.indexOf(selectedWeight)
+        if (index >= 0 && index < hit.available_weights_text.length) {
+            selectedTitle = hit.available_weights_text[index]
+        }
+    }
+
+    const displayData = selectDisplayData(hit, selectedWeight, selectedTitle)
     const fakeVariant = createFakeVariant(displayData, hit)
 
     const maxPrice = parseMeiliPrice(hit.max_price)

@@ -32,40 +32,51 @@ export const MEILISEARCH_PRODUCT_ATTRIBUTES = [
     'status',
     'variant_skus'
 ] as const
+/**
+ * Tipo para el mapeo de variantes (título a peso numérico)
+ */
+export interface VariantMapping {
+    title: string
+    weight: number
+}
 
 /**
- * Obtiene las variantes disponibles (títulos) para una colección específica
+ * Obtiene las variantes disponibles para una colección con mapeo título → peso
  * @param collectionId - ID de la colección
  * @param meiliClient - Cliente de Meilisearch
- * @returns Array de títulos de variantes únicos
+ * @returns Array de mapeos {title, weight}
  */
 export const getAvailableWeightsForCollection = async (
     collectionId: string,
     meiliClient: any
-): Promise<string[]> => {
+): Promise<VariantMapping[]> => {
     try {
         const searchResults = await meiliClient
             .index(MEILISEARCH_PRODUCTS_INDEX)
             .search('', {
                 filter: `collection_id = "${collectionId}"`,
                 limit: 1000,
-                attributesToRetrieve: ['available_weights_text']
+                attributesToRetrieve: ['variant_weights', 'available_weights_text']
             })
 
-        const variantsSet = new Set<string>()
+        const variantsMap = new Map<number, string>()
 
         for (const hit of searchResults.hits) {
-            const variants = (hit as any).available_weights_text
-            if (Array.isArray(variants)) {
-                variants.forEach((v: string) => {
-                    if (v && v.trim()) {
-                        variantsSet.add(v.trim())
+            const weights = (hit as any).variant_weights
+            const titles = (hit as any).available_weights_text
+
+            if (Array.isArray(weights) && Array.isArray(titles)) {
+                weights.forEach((weight: number, index: number) => {
+                    if (index < titles.length && !variantsMap.has(weight)) {
+                        variantsMap.set(weight, titles[index])
                     }
                 })
             }
         }
 
-        return Array.from(variantsSet).sort()
+        return Array.from(variantsMap.entries())
+            .map(([weight, title]) => ({ title, weight }))
+            .sort((a, b) => a.weight - b.weight)
     } catch (error) {
         console.error('Error fetching available variants:', error)
         return []
