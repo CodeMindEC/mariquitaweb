@@ -17,6 +17,7 @@ export interface BaseCardViewModel {
     name: string
     image: string
     highlightLabel: string
+    weightText: string | null
     pricing: CardPricingInfo
 }
 
@@ -67,6 +68,31 @@ const toViewModelPricing = (
 
 const normalizeStoreProduct = (product: StoreProduct): StoreCardViewModel => {
     const pricing = resolveProductPricing(product)
+
+    // Extraer peso de las variantes
+    let weightText: string | null = null
+    if (product.variants && Array.isArray(product.variants) && product.variants.length > 0) {
+        // Encontrar la variante con el precio más bajo
+        let minPrice = Infinity
+        let minPriceWeight: number | null = null
+
+        for (const variant of product.variants) {
+            if (variant.calculated_price && typeof variant.calculated_price.calculated_amount === 'number') {
+                const variantPrice = variant.calculated_price.calculated_amount
+                const variantWeight = variant.weight
+
+                if (variantPrice < minPrice && variantWeight) {
+                    minPrice = variantPrice
+                    minPriceWeight = variantWeight
+                }
+            }
+        }
+
+        if (minPriceWeight !== null) {
+            weightText = `${minPriceWeight}g`
+        }
+    }
+
     return {
         source: "store",
         id: product.id ?? product.handle ?? product.title ?? FALLBACK_NAME,
@@ -74,6 +100,7 @@ const normalizeStoreProduct = (product: StoreProduct): StoreCardViewModel => {
         image: getProductThumbnail(product) ?? FALLBACK_IMAGE,
         highlightLabel:
             product.collection?.title ?? product.type?.value ?? FALLBACK_COLLECTION,
+        weightText,
         pricing: toViewModelPricing(pricing),
         product,
     }
@@ -81,12 +108,14 @@ const normalizeStoreProduct = (product: StoreProduct): StoreCardViewModel => {
 
 const normalizeHit = (hit: MeiliProductHit): SearchHitCardViewModel => {
     const pricing = buildHitPricing(hit)
+    const weightText = hit.weight_for_min_price ? `${hit.weight_for_min_price}g` : null
     return {
         source: "search",
         id: (hit.objectID as string | undefined) ?? hit.id ?? hit.title ?? FALLBACK_NAME,
         name: hit.title ?? hit.description ?? FALLBACK_NAME,
         image: hit.thumbnail ?? FALLBACK_IMAGE,
         highlightLabel: hit.collection_title ?? hit.type_value ?? FALLBACK_COLLECTION,
+        weightText,
         pricing: toViewModelPricing(pricing),
         hit,
     }

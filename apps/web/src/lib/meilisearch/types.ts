@@ -17,6 +17,12 @@ export interface MeiliProductHit {
     type_value?: string | null
     status?: string | null
     variant_skus?: string[]
+    variant_weights?: number[]
+    weight_price_map?: Record<number, number>
+    weight_thumbnail_map?: Record<number, string | null>
+    weight_for_min_price?: number | null
+    weight_for_max_price?: number | null
+    available_weights_text?: string[]
 }
 
 export const parseMeiliPrice = (value: unknown): number | null => {

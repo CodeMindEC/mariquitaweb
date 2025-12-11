@@ -10,9 +10,9 @@ import { resolveProductPricing } from "../../lib/medusajs/pricing"
 import FilterSidebar from "./catalog/FilterSidebar"
 import ProductResults from "./catalog/ProductResults"
 import {
-    useCatalogResults,
+    useMeilisearchCatalog,
     type CatalogResultPayload,
-} from "./catalog/useCatalogResults"
+} from "./catalog/useMeilisearchCatalog"
 
 interface Props {
     categories: StoreProductCategory[]
@@ -96,6 +96,7 @@ export default function Container({
     )
     const [selectedTags, setSelectedTags] = useState<string[]>(sanitizedInitialTags)
     const [selectedType, setSelectedType] = useState<string | null>(initialTypeId ?? null)
+    const [selectedWeight, setSelectedWeight] = useState<number | null>(null)
     const [maxPrice, setMaxPrice] = useState<number>(() =>
         clampPrice(initialMaxPrice, initialPriceBounds.max),
     )
@@ -105,13 +106,31 @@ export default function Container({
     const [showFilters, setShowFilters] = useState(false)
     const catalogLimit = initialResult.limit || FALLBACK_LIMIT
 
-    const { result, loading, loadingMore, hasMore, loadMore, error } = useCatalogResults({
+    // Crear mapa de tag IDs a valores para Meilisearch
+    const tagIdToValue = useMemo(() => {
+        const map = new Map<string, string>()
+        tags.forEach(tag => {
+            if (tag.id && tag.value) {
+                map.set(tag.id, tag.value)
+            }
+        })
+        return map
+    }, [tags])
+
+    // Convertir IDs de tags seleccionados a valores para Meilisearch
+    const selectedTagValues = useMemo(() => {
+        return selectedTags.map(id => tagIdToValue.get(id) || id).filter(Boolean)
+    }, [selectedTags, tagIdToValue])
+
+    // Usar Meilisearch para los filtros del catálogo
+    const { result, loading, loadingMore, hasMore, loadMore, error } = useMeilisearchCatalog({
         initialResult,
         filters: {
             categoryIds: selectedCategories,
             collectionId: selectedCollection,
-            tagIds: selectedTags,
+            tagIds: selectedTagValues,
             typeIds: selectedType ? [selectedType] : [],
+            weight: selectedWeight,
             limit: catalogLimit,
             status: "published",
         },
@@ -226,6 +245,12 @@ export default function Container({
 
     const handleCollectionSelect = (collectionId: string | null) => {
         setSelectedCollection(collectionId)
+        // Resetear peso cuando se cambia de colección
+        setSelectedWeight(null)
+    }
+
+    const handleWeightSelect = (weight: number | null) => {
+        setSelectedWeight(weight)
     }
 
     const toggleTag = (tagId: string) => {
@@ -250,6 +275,7 @@ export default function Container({
         setSelectedCollection(null)
         setSelectedTags([])
         setSelectedType(null)
+        setSelectedWeight(null)
         setMaxPrice(priceBounds.max)
         setMaxPriceDirty(false)
     }
@@ -264,6 +290,7 @@ export default function Container({
         (selectedCollection ? 1 : 0) +
         selectedTags.length +
         (selectedType ? 1 : 0) +
+        (selectedWeight !== null ? 1 : 0) +
         (maxPrice < priceBounds.max ? 1 : 0)
     const hasActiveFilters = activeFilterCount > 0
     const totalProductsLabel =
@@ -289,6 +316,7 @@ export default function Container({
                         selectedCollection={selectedCollection}
                         selectedTags={selectedTags}
                         selectedType={selectedType}
+                        selectedWeight={selectedWeight}
                         hasActiveFilters={hasActiveFilters}
                         activeFilterCount={activeFilterCount}
                         maxPrice={maxPrice}
@@ -297,6 +325,7 @@ export default function Container({
                         onCollectionSelect={handleCollectionSelect}
                         onTagToggle={toggleTag}
                         onTypeSelect={handleTypeSelect}
+                        onWeightSelect={handleWeightSelect}
                         onPriceChange={handlePriceChange}
                     />
                 </div>

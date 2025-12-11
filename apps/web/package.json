@@ -20,6 +20,7 @@
         "@tailwindcss/vite": "^4.1.17",
         "astro": "^5.16.0",
         "lru-cache": "^11.0.1",
+        "meilisearch": "^0.54.0",
         "motion": "^12.23.25",
         "nanostores": "^1.1.0",
         "react": "^19.2.0",

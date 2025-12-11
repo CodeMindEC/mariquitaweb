@@ -19,7 +19,7 @@ const resolvePriceRange = (product: any) => {
         continue
       }
 
-      amounts.push(price.amount / 100)
+      amounts.push(price.amount)
     }
   }
 
@@ -39,6 +39,70 @@ const enhanceProductForSearch = (product: any) => {
   const variants = Array.isArray(product?.variants) ? product.variants : []
   const { minPrice, maxPrice } = resolvePriceRange(product)
 
+  // Extraer información de pesos de las variantes
+  const variantWeightData: Array<{ weight: number | null; price: number; title: string; thumbnail: string | null }> = []
+  const uniqueWeights = new Set<number>()
+
+  for (const variant of variants) {
+    const prices = Array.isArray(variant?.prices) ? variant.prices : []
+    const weight = variant?.weight ?? null
+    const thumbnail = variant?.thumbnail || variant?.metadata?.thumbnail || null
+
+    for (const price of prices) {
+      const currencyMatches =
+        typeof price?.currency_code === 'string' &&
+        price.currency_code.toUpperCase() === DEFAULT_SEARCH_CURRENCY.toUpperCase()
+      if (!currencyMatches || price?.price_list_id || typeof price?.amount !== 'number') {
+        continue
+      }
+
+      if (weight !== null && typeof weight === 'number') {
+        uniqueWeights.add(weight)
+        variantWeightData.push({
+          weight,
+          price: price.amount,
+          title: variant?.title || `${weight}g`,
+          thumbnail
+        })
+      }
+    }
+  }
+
+  // Ordenar pesos únicos
+  const sortedWeights = Array.from(uniqueWeights).sort((a, b) => a - b)
+
+  // Crear mapa de peso -> precio y peso -> thumbnail
+  const weightPriceMap: Record<number, number> = {}
+  const weightThumbnailMap: Record<number, string | null> = {}
+
+  for (const data of variantWeightData) {
+    if (data.weight !== null) {
+      // Si ya existe un precio para este peso, usar el menor
+      if (weightPriceMap[data.weight] === undefined || data.price < weightPriceMap[data.weight]) {
+        weightPriceMap[data.weight] = data.price
+        // Actualizar thumbnail cuando actualizamos el precio
+        weightThumbnailMap[data.weight] = data.thumbnail
+      }
+    }
+  }
+
+  // Encontrar el peso que corresponde al precio mínimo y máximo
+  let weightForMinPrice: number | null = null
+  let weightForMaxPrice: number | null = null
+
+  if (minPrice !== null) {
+    const minVariant = variantWeightData.find(v => v.price === minPrice)
+    weightForMinPrice = minVariant?.weight ?? null
+  }
+
+  if (maxPrice !== null) {
+    const maxVariant = variantWeightData.find(v => v.price === maxPrice)
+    weightForMaxPrice = maxVariant?.weight ?? null
+  }
+
+  // Crear textos legibles para los pesos
+  const availableWeightsText = sortedWeights.map(w => `${w}g`)
+
   return {
     ...product,
     category_ids: categories.map((category: any) => category?.id).filter(Boolean),
@@ -46,7 +110,17 @@ const enhanceProductForSearch = (product: any) => {
       .map((category: any) => category?.name ?? category?.handle)
       .filter(Boolean),
     tag_values: tags.map((tag: any) => tag?.value).filter(Boolean),
+    collection_id: product?.collection?.id || null,
+    collection_title: product?.collection?.title || null,
+    type_id: product?.type?.id || null,
+    type_value: product?.type?.value || null,
     variant_skus: variants.map((variant: any) => variant?.sku).filter(Boolean),
+    variant_weights: sortedWeights,
+    weight_price_map: weightPriceMap,
+    weight_thumbnail_map: weightThumbnailMap,
+    weight_for_min_price: weightForMinPrice,
+    weight_for_max_price: weightForMaxPrice,
+    available_weights_text: availableWeightsText,
     min_price: minPrice,
     max_price: maxPrice,
     currency_code: DEFAULT_SEARCH_CURRENCY,
@@ -104,6 +178,24 @@ module.exports = defineConfig({
         products: {
           type: 'products',
           enabled: true,
+          fields: [
+            'id',
+            'title',
+            'description',
+            'handle',
+            'thumbnail',
+            'status',
+            'metadata',
+            'created_at',
+            'categories.*',
+            'tags.*',
+            'collection.*',
+            'type.*',
+            'variants.id',
+            'variants.sku',
+            'variants.weight',
+            'variants.prices.*',
+          ],
           indexSettings: {
             searchableAttributes: [
               'title',
@@ -119,7 +211,18 @@ module.exports = defineConfig({
               'description',
               'thumbnail',
               'category_names',
+              'category_ids',
               'tag_values',
+              'collection_id',
+              'collection_title',
+              'type_id',
+              'type_value',
+              'variant_weights',
+              'weight_price_map',
+              'weight_thumbnail_map',
+              'weight_for_min_price',
+              'weight_for_max_price',
+              'available_weights_text',
               'min_price',
               'max_price',
               'currency_code',
@@ -131,7 +234,9 @@ module.exports = defineConfig({
               'category_ids',
               'tag_values',
               'collection_id',
+              'type_id',
               'variant_skus',
+              'variant_weights',
             ],
             sortableAttributes: ['min_price', 'max_price', 'created_at'],
             rankingRules: [

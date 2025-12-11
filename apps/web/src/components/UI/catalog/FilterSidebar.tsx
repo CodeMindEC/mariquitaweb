@@ -1,4 +1,4 @@
-import type { ReactNode } from "react"
+import { useEffect, useState, type ReactNode } from "react"
 import type {
     StoreCollection,
     StoreProductCategory,
@@ -6,6 +6,8 @@ import type {
     StoreProductType,
 } from "../../../lib/medusajs/products"
 import { formatPrice } from "../../../lib/medusajs/products"
+import { getAvailableWeightsForCollection } from "../../../lib/meilisearch/utils"
+import { meiliClient, isSearchConfigured } from "../../../lib/meilisearch/searchClient"
 import FilterIcon from "../../../assets/Container/filter.svg"
 import DownIcon from "../../../assets/Container/down.svg"
 
@@ -15,7 +17,7 @@ const getAssetSrc = (asset: string | { src: string }) =>
 const filterIconSrc = getAssetSrc(FilterIcon)
 const downIconSrc = getAssetSrc(DownIcon)
 
-function cleanTextTags(str:string) {
+function cleanTextTags(str: string) {
     const clean = str.replace(/-+/g, " ").toLowerCase().trim();
     return clean.charAt(0).toUpperCase() + clean.slice(1);
 }
@@ -32,6 +34,7 @@ interface FilterSidebarProps {
     selectedCollection: string | null
     selectedTags: string[]
     selectedType: string | null
+    selectedWeight: number | null
     hasActiveFilters: boolean
     activeFilterCount: number
     maxPrice: number
@@ -40,6 +43,7 @@ interface FilterSidebarProps {
     onCollectionSelect(collectionId: string | null): void
     onTagToggle(tagId: string): void
     onTypeSelect(typeId: string | null): void
+    onWeightSelect(weight: number | null): void
     onPriceChange(value: number): void
 }
 
@@ -76,6 +80,7 @@ export default function FilterSidebar({
     selectedCollection,
     selectedTags,
     selectedType,
+    selectedWeight,
     hasActiveFilters,
     activeFilterCount,
     maxPrice,
@@ -84,8 +89,35 @@ export default function FilterSidebar({
     onCollectionSelect,
     onTagToggle,
     onTypeSelect,
+    onWeightSelect,
     onPriceChange,
 }: FilterSidebarProps) {
+    const [availableWeights, setAvailableWeights] = useState<number[]>([])
+    const [loadingWeights, setLoadingWeights] = useState(false)
+
+    // Cargar pesos disponibles cuando se selecciona una colección
+    useEffect(() => {
+        if (!selectedCollection || !isSearchConfigured || !meiliClient) {
+            setAvailableWeights([])
+            return
+        }
+
+        const loadWeights = async () => {
+            setLoadingWeights(true)
+            try {
+                const weights = await getAvailableWeightsForCollection(selectedCollection, meiliClient)
+                setAvailableWeights(weights)
+            } catch (error) {
+                console.error('Error loading weights:', error)
+                setAvailableWeights([])
+            } finally {
+                setLoadingWeights(false)
+            }
+        }
+
+        loadWeights()
+    }, [selectedCollection])
+
     return (
         <>
             <button
@@ -158,7 +190,10 @@ export default function FilterSidebar({
                             <button
                                 type="button"
                                 className={`rounded-2xl px-4 py-2 text-left text-sm transition ${selectedCollection === null ? "bg-surface-primary text-primary" : "text-text-primary hover:bg-surface-primary/80"}`}
-                                onClick={() => onCollectionSelect(null)}
+                                onClick={() => {
+                                    onCollectionSelect(null)
+                                    onWeightSelect(null)
+                                }}
                             >
                                 Todos los productos
                             </button>
@@ -166,18 +201,53 @@ export default function FilterSidebar({
                                 const id = collection.id!
                                 const isActive = selectedCollection === id
                                 return (
-                                    <button
-                                        key={id}
-                                        type="button"
-                                        className={`flex w-full items-center justify-between rounded-2xl px-4 py-2 text-sm transition ${isActive ? "bg-surface-primary text-primary" : "text-text-primary hover:bg-surface-primary/80"}`}
-                                        aria-pressed={isActive ? "true" : "false"}
-                                        onClick={() => onCollectionSelect(isActive ? null : id)}
-                                    >
-                                        <span>
-                                            {collection.title ?? collection.handle ?? "Colección"}
-                                        </span>
-                                        {isActive && <span className="w-2 h-2 bg-primary rounded-full"></span>}
-                                    </button>
+                                    <div key={id} className="flex flex-col gap-1">
+                                        <button
+                                            type="button"
+                                            className={`flex w-full items-center justify-between rounded-2xl px-4 py-2 text-sm transition ${isActive ? "bg-surface-primary text-primary" : "text-text-primary hover:bg-surface-primary/80"}`}
+                                            aria-pressed={isActive ? "true" : "false"}
+                                            onClick={() => {
+                                                onCollectionSelect(isActive ? null : id)
+                                                if (isActive) {
+                                                    onWeightSelect(null)
+                                                }
+                                            }}
+                                        >
+                                            <span>
+                                                {collection.title ?? collection.handle ?? "Colección"}
+                                            </span>
+                                            {isActive && <span className="w-2 h-2 bg-primary rounded-full"></span>}
+                                        </button>
+
+                                        {/* Dropdown de pesos cuando la colección está activa */}
+                                        {isActive && availableWeights.length > 0 && (
+                                            <div className="ml-4 flex flex-col gap-1 pl-2 border-l-2 border-surface-primary">
+                                                <button
+                                                    type="button"
+                                                    className={`rounded-xl px-3 py-1.5 text-left text-xs transition ${selectedWeight === null ? "bg-primary/10 text-primary" : "text-text-secondary hover:bg-surface-primary/60"}`}
+                                                    onClick={() => onWeightSelect(null)}
+                                                >
+                                                    Todos los pesos
+                                                </button>
+                                                {availableWeights.map((weight) => (
+                                                    <button
+                                                        key={weight}
+                                                        type="button"
+                                                        className={`rounded-xl px-3 py-1.5 text-left text-xs transition ${selectedWeight === weight ? "bg-primary/10 text-primary" : "text-text-secondary hover:bg-surface-primary/60"}`}
+                                                        onClick={() => onWeightSelect(weight)}
+                                                    >
+                                                        {weight}g
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        )}
+
+                                        {isActive && loadingWeights && (
+                                            <div className="ml-4 pl-2 text-xs text-text-secondary">
+                                                Cargando pesos...
+                                            </div>
+                                        )}
+                                    </div>
                                 )
                             })}
                         </div>

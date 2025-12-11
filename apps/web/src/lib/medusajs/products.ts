@@ -144,6 +144,7 @@ const PRODUCT_DEFAULT_FIELDS = [
     "variants.id",
     "variants.calculated_price",
     "variants.prices",
+    "variants.weight",
     "*categories",
     "type_id",
     "*type",
