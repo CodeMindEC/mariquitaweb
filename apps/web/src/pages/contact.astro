@@ -1,0 +1,570 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Footer from "../components/UI/Footer.astro";
+import clock from "../assets/icons/clock.svg";
+import mail from "../assets/icons/mail.svg";
+import phone from "../assets/icons/phone-call.svg";
+import pin from "../assets/icons/marker-pin.svg";
+---
+
+<Layout>
+  <section
+    class="relative overflow-hidden bg-linear-to-r from-green-600 via-green-500 to-yellow-500 text-white py-20"
+  >
+    <div class="absolute inset-0 opacity-10">
+      <div
+        class="absolute top-10 left-10 w-32 h-32 bg-white rounded-full animate-pulse"
+      >
+      </div>
+      <div
+        class="absolute bottom-10 right-10 w-40 h-40 bg-white rounded-full animate-pulse delay-75"
+      >
+      </div>
+      <div
+        class="absolute top-1/2 left-1/3 w-24 h-24 bg-white rounded-full animate-pulse delay-150"
+      >
+      </div>
+    </div>
+    <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
+      <h1 class="text-5xl md:text-6xl font-bold mb-4 animate-fade-in">
+        ¡Estamos aquí para ti!
+      </h1>
+      <p class="text-xl md:text-2xl opacity-90 animate-fade-in-delay">
+        Tu satisfacción es nuestra prioridad. Contáctanos hoy mismo.
+      </p>
+    </div>
+  </section>
+  {/* Contact Info Cards */}
+  <section class="max-w-7xl mx-auto px-4 -mt-16 mb-16 relative z-20">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div
+        class="bg-white rounded-2xl shadow-xl p-6 transform hover:scale-105 hover:-translate-y-2 transition-all duration-300 cursor-pointer group"
+        style={{
+          animation: `slideUp 0.6s ease-out 2s both`,
+        }}
+      >
+        <div
+          class={`w-16 h-16 bg-linear-to-br  rounded-xl flex items-center justify-center mb-4 group-hover:rotate-12 transition-transform duration-300`}
+        >
+          <img
+            src={phone.src}
+            alt="Flecha derecha"
+            class="w-8 h-8 text-white"
+          />
+        </div>
+        <h3 class="text-lg font-bold text-gray-800 mb-2">{"Teléfono"}</h3>
+        <p class="text-gray-700 font-semibold mb-1">{"+593 4 123 4567"}</p>
+        <p class="text-sm text-gray-500">{"Lun - Sáb: 8:00 AM - 8:00 PM"}</p>
+      </div>
+      <div
+        class="bg-white rounded-2xl shadow-xl p-6 transform hover:scale-105 hover:-translate-y-2 transition-all duration-300 cursor-pointer group"
+        style={{
+          animation: `slideUp 0.6s ease-out 2s both`,
+        }}
+      >
+        <div
+          class={`w-16 h-16 bg-linear-to-br  rounded-xl flex items-center justify-center mb-4 group-hover:rotate-12 transition-transform duration-300`}
+        >
+          <img src={mail.src} alt="Flecha derecha" class="w-8 h-8 text-white" />
+        </div>
+        <h3 class="text-lg font-bold text-gray-800 mb-2">{"Email"}</h3>
+        <p class="text-gray-700 font-semibold mb-1">{"info@mariquita.com"}</p>
+        <p class="text-sm text-gray-500">{"Respuesta en 24 horas"}</p>
+      </div>
+      <div
+        class="bg-white rounded-2xl shadow-xl p-6 transform hover:scale-105 hover:-translate-y-2 transition-all duration-300 cursor-pointer group"
+        style={{
+          animation: `slideUp 0.6s ease-out 2s both`,
+        }}
+      >
+        <div
+          class={`w-16 h-16 bg-linear-to-br  rounded-xl flex items-center justify-center mb-4 group-hover:rotate-12 transition-transform duration-300`}
+        >
+          <img src={pin.src} alt="Flecha derecha" class="w-8 h-8 text-white" />
+        </div>
+        <h3 class="text-lg font-bold text-gray-800 mb-2">{"Dirección"}</h3>
+        <p class="text-gray-700 font-semibold mb-1">{"Guayaquil, Ecuador"}</p>
+        <p class="text-sm text-gray-500">{"Av. Principal 123"}</p>
+      </div>
+      <div
+        class="bg-white rounded-2xl shadow-xl p-6 transform hover:scale-105 hover:-translate-y-2 transition-all duration-300 cursor-pointer group"
+        style={{
+          animation: `slideUp 0.6s ease-out 2s both`,
+        }}
+      >
+        <div
+          class={`w-16 h-16 bg-linear-to-br  rounded-xl flex items-center justify-center mb-4 group-hover:rotate-12 transition-transform duration-300`}
+        >
+          <img
+            src={clock.src}
+            alt="Flecha derecha"
+            class="w-8 h-8 text-white"
+          />
+        </div>
+        <h3 class="text-lg font-bold text-gray-800 mb-2">{"Horario"}</h3>
+        <p class="text-gray-700 font-semibold mb-1">
+          {"Lun - Sáb: 8:00 AM - 8:00 PM"}
+        </p>
+        <p class="text-sm text-gray-500">{"Dom: 9:00 AM - 2:00 PM"}</p>
+      </div>
+    </div>
+  </section>
+
+  {/* Main Content */}
+  <section class="max-w-7xl mx-auto px-4 pb-20">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      {/* Contact Form */}
+      <div class="bg-white rounded-3xl shadow-2xl p-8 md:p-10">
+        <h2 class="text-3xl font-bold text-gray-800 mb-2">
+          Envíanos un mensaje
+        </h2>
+        <p class="text-gray-600 mb-8">
+          Completa el formulario y te responderemos pronto
+        </p>
+
+        <form class="space-y-6">
+          <div class="relative">
+            <input
+              type="text"
+              name="nombre"
+              required
+              class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-all duration-300"
+              placeholder="Nombre completo"
+            />
+            <div
+              class={`absolute bottom-0 left-0 h-0.5 bg-linear-to-r from-green-500 to-yellow-500 transition-all duration-300 `}
+            >
+            </div>
+          </div>
+
+          <div class="relative">
+            <input
+              type="email"
+              name="email"
+              required
+              class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-all duration-300"
+              placeholder="Correo electrónico"
+            />
+            <div
+              class={`absolute bottom-0 left-0 h-0.5 bg-linear-to-r from-green-500 to-yellow-500 transition-all duration-300 `}
+            >
+            </div>
+          </div>
+
+          <div class="relative">
+            <input
+              type="tel"
+              name="telefono"
+              class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-all duration-300"
+              placeholder="Teléfono (opcional)"
+            />
+            <div
+              class={`absolute bottom-0 left-0 h-0.5 bg-linear-to-r from-green-500 to-yellow-500 transition-all duration-300 `}
+            >
+            </div>
+          </div>
+
+          <div class="relative">
+            <input
+              type="text"
+              name="asunto"
+              required
+              class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-all duration-300"
+              placeholder="Asunto"
+            />
+            <div
+              class={`absolute bottom-0 left-0 h-0.5 bg-linear-to-r from-green-500 to-yellow-500 transition-all duration-300 `}
+            >
+            </div>
+          </div>
+
+          <div class="relative">
+            <textarea
+              name="mensaje"
+              required
+              rows="5"
+              class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-all duration-300 resize-none"
+              placeholder="Escribe tu mensaje aquí..."></textarea>
+            <div
+              class={`absolute bottom-0 left-0 h-0.5 bg-linear-to-r from-green-500 to-yellow-500 transition-all duration-300 `}
+            >
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            class="w-full bg-linear-to-r from-green-500 to-green-700 text-white font-bold py-4 rounded-xl hover:from-green-600 hover:to-green-800 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+          >
+            {/* <Send class="w-5 h-5" /> */}
+            Enviar Mensaje
+          </button>
+        </form>
+      </div>
+
+      {/* Map & Additional Info */}
+      <div class="space-y-6">
+        <div class="bg-white rounded-3xl shadow-2xl p-8 md:p-10">
+          <h2 class="text-3xl font-bold text-gray-800 mb-6">Visítanos</h2>
+          <div
+            class="bg-linear-to-br from-green-100 to-yellow-100 rounded-2xl h-64 flex items-center justify-center mb-6 overflow-hidden relative group"
+          >
+            <div
+              class="absolute inset-0 bg-linear-to-br from-green-500/20 to-yellow-500/20 group-hover:scale-110 transition-transform duration-500"
+            >
+            </div>
+            <!-- <MapPin class="w-16 h-16 text-green-600 relative z-10" /> -->
+          </div>
+          <div class="space-y-4">
+            <div class="flex items-start gap-3">
+              <!-- <MapPin class="w-6 h-6 text-green-600 shrink-0 mt-1" /> -->
+              <div>
+                <p class="font-semibold text-gray-800">Dirección Principal</p>
+                <p class="text-gray-600">Av. Principal 123, Guayaquil</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <!-- <Clock class="w-6 h-6 text-yellow-600 shrink-0 mt-1" /> -->
+              <div>
+                <p class="font-semibold text-gray-800">Horario de Atención</p>
+                <p class="text-gray-600">Lun - Sáb: 8:00 AM - 8:00 PM</p>
+                <p class="text-gray-600">Dom: 9:00 AM - 2:00 PM</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="bg-linear-to-br from-orange-400 via-yellow-400 to-green-500 rounded-3xl shadow-2xl p-8 md:p-10 text-white relative overflow-hidden"
+        >
+          <div
+            class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"
+          >
+          </div>
+          <div
+            class="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12"
+          >
+          </div>
+          <div class="relative z-10">
+            <h3 class="text-2xl font-bold mb-4">¿Necesitas ayuda inmediata?</h3>
+            <p class="mb-6 opacity-90">
+              Nuestro equipo está listo para atenderte
+            </p>
+            <a
+              href="tel:+59341234567"
+              class="inline-block bg-white text-green-600 font-bold py-3 px-8 rounded-xl hover:bg-green-50 transform hover:scale-105 transition-all duration-300 shadow-lg"
+            >
+              Llamar Ahora
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <Footer />
+</Layout>
+
+<!-- 
+import React, { useState } from 'react';
+import { Mail, Phone, MapPin, Clock, Send, CheckCircle } from 'lucide-react';
+
+export default function ContactPage() {
+  const [formData, setFormData] = useState({
+    nombre: '',
+    email: '',
+    telefono: '',
+    asunto: '',
+    mensaje: ''
+  });
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [focusedField, setFocusedField] = useState(null);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setIsSubmitted(true);
+    setTimeout(() => {
+      setIsSubmitted(false);
+      setFormData({
+        nombre: '',
+        email: '',
+        telefono: '',
+        asunto: '',
+        mensaje: ''
+      });
+    }, 3000);
+  };
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const contactInfo = [
+    {
+      icon: Phone,
+      title: 'Teléfono',
+      content: '+593 4 123 4567',
+      detail: 'Lun - Sáb: 8:00 AM - 8:00 PM',
+      color: 'from-green-400 to-green-600'
+    },
+    {
+      icon: Mail,
+      title: 'Email',
+      content: 'info@mariquita.com',
+      detail: 'Respuesta en 24 horas',
+      color: 'from-yellow-400 to-orange-500'
+    },
+    {
+      icon: MapPin,
+      title: 'Dirección',
+      content: 'Guayaquil, Ecuador',
+      detail: 'Av. Principal 123',
+      color: 'from-red-400 to-red-600'
+    },
+    {
+      icon: Clock,
+      title: 'Horario',
+      content: 'Lun - Sáb: 8:00 AM - 8:00 PM',
+      detail: 'Dom: 9:00 AM - 2:00 PM',
+      color: 'from-green-500 to-green-700'
+    }
+  ];
+
+  return (
+    <div class="min-h-screen bg-linear-to-br from-orange-50 via-yellow-50 to-green-50">
+      {/* Header */}
+      <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="w-10 h-10 bg-linear-to-br from-green-500 to-green-700 rounded-full flex items-center justify-center">
+              <span class="text-white font-bold text-xl">M</span>
+            </div>
+            <span class="text-2xl font-bold text-green-700">Mariquita</span>
+          </div>
+          <nav class="hidden md:flex gap-6">
+            <a href="#" class="text-gray-700 hover:text-green-600 transition-colors">Inicio</a>
+            <a href="#" class="text-gray-700 hover:text-green-600 transition-colors">Productos</a>
+            <a href="#" class="text-green-600 font-semibold">Contacto</a>
+          </nav>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <section class="relative overflow-hidden bg-linear-to-r from-green-600 via-green-500 to-yellow-500 text-white py-20">
+        <div class="absolute inset-0 opacity-10">
+          <div class="absolute top-10 left-10 w-32 h-32 bg-white rounded-full animate-pulse"></div>
+          <div class="absolute bottom-10 right-10 w-40 h-40 bg-white rounded-full animate-pulse delay-75"></div>
+          <div class="absolute top-1/2 left-1/3 w-24 h-24 bg-white rounded-full animate-pulse delay-150"></div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
+          <h1 class="text-5xl md:text-6xl font-bold mb-4 animate-fade-in">
+            ¡Estamos aquí para ti!
+          </h1>
+          <p class="text-xl md:text-2xl opacity-90 animate-fade-in-delay">
+            Tu satisfacción es nuestra prioridad. Contáctanos hoy mismo.
+          </p>
+        </div>
+      </section>
+
+      {/* Contact Info Cards */}
+      <section class="max-w-7xl mx-auto px-4 -mt-16 mb-16 relative z-20">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {contactInfo.map((info, index) => (
+            <div
+              key={index}
+              class="bg-white rounded-2xl shadow-xl p-6 transform hover:scale-105 hover:-translate-y-2 transition-all duration-300 cursor-pointer group"
+              style={{
+                animation: `slideUp 0.6s ease-out ${index * 0.1}s both`
+              }}
+            >
+              <div class={`w-16 h-16 bg-linear-to-br ${info.color} rounded-xl flex items-center justify-center mb-4 group-hover:rotate-12 transition-transform duration-300`}>
+                <info.icon class="w-8 h-8 text-white" />
+              </div>
+              <h3 class="text-lg font-bold text-gray-800 mb-2">{info.title}</h3>
+              <p class="text-gray-700 font-semibold mb-1">{info.content}</p>
+              <p class="text-sm text-gray-500">{info.detail}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Main Content */}
+      <section class="max-w-7xl mx-auto px-4 pb-20">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          {/* Contact Form */}
+          <div class="bg-white rounded-3xl shadow-2xl p-8 md:p-10">
+            <h2 class="text-3xl font-bold text-gray-800 mb-2">Envíanos un mensaje</h2>
+            <p class="text-gray-600 mb-8">Completa el formulario y te responderemos pronto</p>
+            
+            {isSubmitted ? (
+              <div class="flex flex-col items-center justify-center py-12 animate-fade-in">
+                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                  <CheckCircle class="w-12 h-12 text-green-600" />
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">¡Mensaje Enviado!</h3>
+                <p class="text-gray-600 text-center">Te responderemos lo antes posible</p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} class="space-y-6">
+                <div class="relative">
+                  <input
+                    type="text"
+                    name="nombre"
+                    value={formData.nombre}
+                    onChange={handleChange}
+                    onFocus={() => setFocusedField('nombre')}
+                    onBlur={() => setFocusedField(null)}
+                    required
+                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-all duration-300"
+                    placeholder="Nombre completo"
+                  />
+                  <div class={`absolute bottom-0 left-0 h-0.5 bg-linear-to-r from-green-500 to-yellow-500 transition-all duration-300 ${focusedField === 'nombre' ? 'w-full' : 'w-0'}`}></div>
+                </div>
+
+                <div class="relative">
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    onFocus={() => setFocusedField('email')}
+                    onBlur={() => setFocusedField(null)}
+                    required
+                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-all duration-300"
+                    placeholder="Correo electrónico"
+                  />
+                  <div class={`absolute bottom-0 left-0 h-0.5 bg-linear-to-r from-green-500 to-yellow-500 transition-all duration-300 ${focusedField === 'email' ? 'w-full' : 'w-0'}`}></div>
+                </div>
+
+                <div class="relative">
+                  <input
+                    type="tel"
+                    name="telefono"
+                    value={formData.telefono}
+                    onChange={handleChange}
+                    onFocus={() => setFocusedField('telefono')}
+                    onBlur={() => setFocusedField(null)}
+                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-all duration-300"
+                    placeholder="Teléfono (opcional)"
+                  />
+                  <div class={`absolute bottom-0 left-0 h-0.5 bg-linear-to-r from-green-500 to-yellow-500 transition-all duration-300 ${focusedField === 'telefono' ? 'w-full' : 'w-0'}`}></div>
+                </div>
+
+                <div class="relative">
+                  <input
+                    type="text"
+                    name="asunto"
+                    value={formData.asunto}
+                    onChange={handleChange}
+                    onFocus={() => setFocusedField('asunto')}
+                    onBlur={() => setFocusedField(null)}
+                    required
+                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-all duration-300"
+                    placeholder="Asunto"
+                  />
+                  <div class={`absolute bottom-0 left-0 h-0.5 bg-linear-to-r from-green-500 to-yellow-500 transition-all duration-300 ${focusedField === 'asunto' ? 'w-full' : 'w-0'}`}></div>
+                </div>
+
+                <div class="relative">
+                  <textarea
+                    name="mensaje"
+                    value={formData.mensaje}
+                    onChange={handleChange}
+                    onFocus={() => setFocusedField('mensaje')}
+                    onBlur={() => setFocusedField(null)}
+                    required
+                    rows="5"
+                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-all duration-300 resize-none"
+                    placeholder="Escribe tu mensaje aquí..."
+                  ></textarea>
+                  <div class={`absolute bottom-0 left-0 h-0.5 bg-linear-to-r from-green-500 to-yellow-500 transition-all duration-300 ${focusedField === 'mensaje' ? 'w-full' : 'w-0'}`}></div>
+                </div>
+
+                <button
+                  type="submit"
+                  class="w-full bg-linear-to-r from-green-500 to-green-700 text-white font-bold py-4 rounded-xl hover:from-green-600 hover:to-green-800 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                >
+                  <Send class="w-5 h-5" />
+                  Enviar Mensaje
+                </button>
+              </form>
+            )}
+          </div>
+
+          {/* Map & Additional Info */}
+          <div class="space-y-6">
+            <div class="bg-white rounded-3xl shadow-2xl p-8 md:p-10">
+              <h2 class="text-3xl font-bold text-gray-800 mb-6">Visítanos</h2>
+              <div class="bg-linear-to-br from-green-100 to-yellow-100 rounded-2xl h-64 flex items-center justify-center mb-6 overflow-hidden relative group">
+                <div class="absolute inset-0 bg-linear-to-br from-green-500/20 to-yellow-500/20 group-hover:scale-110 transition-transform duration-500"></div>
+                <MapPin class="w-16 h-16 text-green-600 relative z-10" />
+              </div>
+              <div class="space-y-4">
+                <div class="flex items-start gap-3">
+                  <MapPin class="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+                  <div>
+                    <p class="font-semibold text-gray-800">Dirección Principal</p>
+                    <p class="text-gray-600">Av. Principal 123, Guayaquil</p>
+                  </div>
+                </div>
+                <div class="flex items-start gap-3">
+                  <Clock class="w-6 h-6 text-yellow-600 flex-shrink-0 mt-1" />
+                  <div>
+                    <p class="font-semibold text-gray-800">Horario de Atención</p>
+                    <p class="text-gray-600">Lun - Sáb: 8:00 AM - 8:00 PM</p>
+                    <p class="text-gray-600">Dom: 9:00 AM - 2:00 PM</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-linear-to-br from-orange-400 via-yellow-400 to-green-500 rounded-3xl shadow-2xl p-8 md:p-10 text-white relative overflow-hidden">
+              <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+              <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12"></div>
+              <div class="relative z-10">
+                <h3 class="text-2xl font-bold mb-4">¿Necesitas ayuda inmediata?</h3>
+                <p class="mb-6 opacity-90">Nuestro equipo está listo para atenderte</p>
+                <a
+                  href="tel:+59341234567"
+                  class="inline-block bg-white text-green-600 font-bold py-3 px-8 rounded-xl hover:bg-green-50 transform hover:scale-105 transition-all duration-300 shadow-lg"
+                >
+                  Llamar Ahora
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <style jsx>{`
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fade-in {
+          animation: fade-in 0.8s ease-out;
+        }
+        .animate-fade-in-delay {
+          animation: fade-in 0.8s ease-out 0.2s both;
+        }
+      `}</style>
+    </div>
+  );
+} -->

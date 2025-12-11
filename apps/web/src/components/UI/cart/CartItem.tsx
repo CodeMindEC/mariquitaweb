@@ -22,7 +22,7 @@ const CartItem: FC<CartItemProps> = ({ item }) => {
     : null;
 
   return (
-    <div className="cart-item flex flex-col sm:flex-row gap-3 sm:gap-4 rounded-lg border border-gray-200 p-3 sm:p-4 transition-shadow hover:shadow-md">
+    <div className="cart-item flex flex-col sm:flex-row gap-3 sm:gap-4 rounded-lg border border-gray-200 p-3 sm:p-4 transition-shadow hover:-translate-y-1 hover:border-primary/40 hover:shadow-[0_5px_10px_rgba(34,197,94,0.25)]">
       <div className="h-32 w-full sm:w-24 sm:h-24 shrink-0 overflow-hidden rounded-lg shadow-sm mb-2 sm:mb-0">
         <img
           src={image}
