@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro"
 import { listProducts } from "../../lib/medusajs/products"
-import type { StoreProduct } from "../../lib/medusajs/products"
-import { resolveProductPricing } from "../../lib/medusajs/pricing"
+import { computePriceRangeFromProducts } from "../../lib/meilisearch/converters"
+import { parseIdList, parsePositiveNumber } from "../../lib/utils"
 
 const DEFAULT_LIMIT = 12
 const MAX_LIMIT = 60
@@ -12,31 +12,6 @@ const parseNumericParam = (value: string | null, fallback: number, { min = 0, ma
     if (!Number.isFinite(parsed)) return fallback
     const clamped = Math.max(min, Math.min(parsed, max))
     return clamped
-}
-
-const parseIdList = (url: URL, ...keys: string[]) => {
-    const values = keys
-        .flatMap((key) => url.searchParams.getAll(key))
-        .flatMap((value) => value.split(","))
-        .map((value) => value.trim())
-        .filter(Boolean)
-
-    return Array.from(new Set(values))
-}
-
-const computePriceRange = (products: StoreProduct[]) => {
-    const prices = products
-        .map((product) => resolveProductPricing(product).price)
-        .filter((price) => typeof price === "number" && price >= 0)
-
-    if (!prices.length) {
-        return { min: 0, max: 0 }
-    }
-
-    return {
-        min: Math.min(...prices),
-        max: Math.max(...prices),
-    }
 }
 
 export const GET: APIRoute = async ({ url }) => {
@@ -62,7 +37,7 @@ export const GET: APIRoute = async ({ url }) => {
             type_id: typeIds.length ? typeIds : undefined,
         })
 
-        const priceRange = computePriceRange(response.products ?? [])
+        const priceRange = computePriceRangeFromProducts(response.products ?? [])
 
         return new Response(
             JSON.stringify({

@@ -1,12 +1,8 @@
 import { useEffect, useState, type ReactNode } from "react"
-import type {
-    StoreCollection,
-    StoreProductCategory,
-    StoreProductTag,
-    StoreProductType,
-} from "../../../lib/medusajs/products"
+import type { HttpTypes } from "@medusajs/types"
+import type { StoreCollection } from "../../../lib/medusajs/products"
 import { formatPrice } from "../../../lib/medusajs/products"
-import { getAvailableWeightsForCollection } from "../../../lib/meilisearch/utils"
+import { getAvailableWeightsForCollection } from "../../../lib/meilisearch/queries"
 import { meiliClient, isSearchConfigured } from "../../../lib/meilisearch/searchClient"
 import FilterIcon from "../../../assets/Container/filter.svg"
 import DownIcon from "../../../assets/Container/down.svg"
@@ -26,15 +22,15 @@ interface FilterSidebarProps {
     isOpen: boolean
     onToggle(): void
     onClose(): void
-    categories: StoreProductCategory[]
+    categories: HttpTypes.StoreProductCategory[]
     collections: StoreCollection[]
-    tags: StoreProductTag[]
-    types: StoreProductType[]
+    tags: HttpTypes.StoreProductTag[]
+    types: HttpTypes.StoreProductType[]
     selectedCategories: string[]
     selectedCollection: string | null
     selectedTags: string[]
     selectedType: string | null
-    selectedWeight: number | null
+    selectedWeight: string | null
     hasActiveFilters: boolean
     activeFilterCount: number
     maxPrice: number
@@ -43,7 +39,7 @@ interface FilterSidebarProps {
     onCollectionSelect(collectionId: string | null): void
     onTagToggle(tagId: string): void
     onTypeSelect(typeId: string | null): void
-    onWeightSelect(weight: number | null): void
+    onWeightSelect(weight: string | null): void
     onPriceChange(value: number): void
 }
 
@@ -92,10 +88,10 @@ export default function FilterSidebar({
     onWeightSelect,
     onPriceChange,
 }: FilterSidebarProps) {
-    const [availableWeights, setAvailableWeights] = useState<number[]>([])
+    const [availableWeights, setAvailableWeights] = useState<string[]>([])
     const [loadingWeights, setLoadingWeights] = useState(false)
 
-    // Cargar pesos disponibles cuando se selecciona una colección
+    // Cargar variantes disponibles cuando se selecciona una colección
     useEffect(() => {
         if (!selectedCollection || !isSearchConfigured || !meiliClient) {
             setAvailableWeights([])
@@ -108,7 +104,7 @@ export default function FilterSidebar({
                 const weights = await getAvailableWeightsForCollection(selectedCollection, meiliClient)
                 setAvailableWeights(weights)
             } catch (error) {
-                console.error('Error loading weights:', error)
+                console.error('Error loading variants:', error)
                 setAvailableWeights([])
             } finally {
                 setLoadingWeights(false)
@@ -219,24 +215,17 @@ export default function FilterSidebar({
                                             {isActive && <span className="w-2 h-2 bg-primary rounded-full"></span>}
                                         </button>
 
-                                        {/* Dropdown de pesos cuando la colección está activa */}
+                                        {/* Dropdown de variantes cuando la colección está activa */}
                                         {isActive && availableWeights.length > 0 && (
                                             <div className="ml-4 flex flex-col gap-1 pl-2 border-l-2 border-surface-primary">
-                                                <button
-                                                    type="button"
-                                                    className={`rounded-xl px-3 py-1.5 text-left text-xs transition ${selectedWeight === null ? "bg-primary/10 text-primary" : "text-text-secondary hover:bg-surface-primary/60"}`}
-                                                    onClick={() => onWeightSelect(null)}
-                                                >
-                                                    Todos los pesos
-                                                </button>
-                                                {availableWeights.map((weight) => (
+                                                {availableWeights.map((variantTitle) => (
                                                     <button
-                                                        key={weight}
+                                                        key={variantTitle}
                                                         type="button"
-                                                        className={`rounded-xl px-3 py-1.5 text-left text-xs transition ${selectedWeight === weight ? "bg-primary/10 text-primary" : "text-text-secondary hover:bg-surface-primary/60"}`}
-                                                        onClick={() => onWeightSelect(weight)}
+                                                        className={`rounded-xl px-3 py-1.5 text-left text-xs transition ${selectedWeight === variantTitle ? "bg-primary/10 text-primary" : "text-text-secondary hover:bg-surface-primary/60"}`}
+                                                        onClick={() => onWeightSelect(variantTitle)}
                                                     >
-                                                        {weight}g
+                                                        {variantTitle}
                                                     </button>
                                                 ))}
                                             </div>
@@ -244,7 +233,7 @@ export default function FilterSidebar({
 
                                         {isActive && loadingWeights && (
                                             <div className="ml-4 pl-2 text-xs text-text-secondary">
-                                                Cargando pesos...
+                                                Cargando variantes...
                                             </div>
                                         )}
                                     </div>

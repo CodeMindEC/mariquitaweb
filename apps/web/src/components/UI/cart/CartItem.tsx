@@ -2,15 +2,14 @@ import CartItemIsland from "./CartItemIsland";
 import type { FC } from "react";
 import type { CartItem as CartEntry } from "@stores/cart";
 import { formatPrice } from "@lib/medusajs/products";
+import { FALLBACK_PRODUCT_IMAGE } from "@lib/utils/constants";
 
 interface CartItemProps {
   item: CartEntry;
 }
 
-const FALLBACK_IMAGE = "/images/placeholder-product.jpg";
-
 const CartItem: FC<CartItemProps> = ({ item }) => {
-  const image = item.thumbnail ?? FALLBACK_IMAGE;
+  const image = item.thumbnail ?? FALLBACK_PRODUCT_IMAGE;
   const name = item.title || "Producto sin nombre";
   const basePrice = item.unit_price ?? 0;
   const formattedPrice = formatPrice(basePrice);

@@ -2,22 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { meiliClient, isSearchConfigured, MEILISEARCH_PRODUCTS_INDEX } from "@lib/meilisearch/searchClient"
 import type { MeiliProductHit } from "@lib/meilisearch/types"
 import type { StoreProduct } from "@lib/medusajs/products"
-import {
-    convertMeiliHitToProduct,
-    buildMeilisearchFilters,
-    MEILISEARCH_PRODUCT_ATTRIBUTES,
-    computePriceRangeFromProducts,
-} from "@lib/meilisearch/utils"
-
-export interface CatalogFilters {
-    categoryIds: string[]
-    collectionId: string | null
-    tagIds: string[]
-    typeIds: string[]
-    weight?: number | null
-    limit: number
-    status?: string
-}
+import { convertMeiliHitToProduct, computePriceRangeFromProducts } from "@lib/meilisearch/converters"
+import { buildMeilisearchFilters, type CatalogFilters } from "@lib/meilisearch/filters"
+import { MEILISEARCH_PRODUCT_ATTRIBUTES } from "@lib/meilisearch/queries"
 
 export interface CatalogResultPayload {
     products: StoreProduct[]
@@ -29,7 +16,7 @@ export interface CatalogResultPayload {
 
 interface UseMeilisearchCatalogOptions {
     initialResult: CatalogResultPayload
-    filters: CatalogFilters
+    filters: CatalogFilters & { limit: number }
 }
 
 export interface CatalogPriceRange {

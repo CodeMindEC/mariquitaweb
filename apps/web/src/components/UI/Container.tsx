@@ -1,11 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
-import type {
-    StoreCollection,
-    StoreProduct,
-    StoreProductCategory,
-    StoreProductTag,
-    StoreProductType,
-} from "../../lib/medusajs/products"
+import type { HttpTypes } from "@medusajs/types"
+import type { StoreCollection, StoreProduct } from "../../lib/medusajs/products"
+import { computePriceRangeFromProducts } from "../../lib/meilisearch/converters"
 import { resolveProductPricing } from "../../lib/medusajs/pricing"
 import FilterSidebar from "./catalog/FilterSidebar"
 import ProductResults from "./catalog/ProductResults"
@@ -15,10 +11,10 @@ import {
 } from "./catalog/useMeilisearchCatalog"
 
 interface Props {
-    categories: StoreProductCategory[]
+    categories: HttpTypes.StoreProductCategory[]
     collections: StoreCollection[]
-    tags: StoreProductTag[]
-    types: StoreProductType[]
+    tags: HttpTypes.StoreProductTag[]
+    types: HttpTypes.StoreProductType[]
     initialResult: CatalogResultPayload
     initialCategoryIds?: string[]
     initialCollectionId?: string | null
@@ -32,31 +28,10 @@ const sanitizeIds = (ids?: (string | null)[]) =>
         new Set((ids ?? []).filter((value): value is string => Boolean(value))),
     )
 
-const deriveTopLevelCategories = (categories: StoreProductCategory[]) =>
+const deriveTopLevelCategories = (categories: HttpTypes.StoreProductCategory[]) =>
     categories.filter((cat) => !cat.parent_category_id)
 
 const FALLBACK_LIMIT = 12
-
-const derivePriceBoundaries = (products: StoreProduct[]) => {
-    const prices = products
-        .map((product) => resolveProductPricing(product).price)
-        .filter((price) => typeof price === "number" && price >= 0)
-
-    if (!prices.length) {
-        return { min: 0, max: 100 }
-    }
-
-    const min = Math.max(0, Math.floor(Math.min(...prices)))
-    const max = Math.max(min + 1, Math.ceil(Math.max(...prices)))
-
-    return {
-        min,
-        max,
-    }
-}
-
-const getProductPriceInUnits = (product: StoreProduct) =>
-    resolveProductPricing(product).price
 
 const clampPrice = (value: number | null | undefined, max: number) =>
     typeof value === "number" && value > 0 ? Math.min(value, max) : max
@@ -75,7 +50,7 @@ export default function Container({
 }: Props) {
     const topLevel = useMemo(() => deriveTopLevelCategories(categories), [categories])
     const initialPriceBounds = useMemo(
-        () => derivePriceBoundaries(initialResult.products),
+        () => computePriceRangeFromProducts(initialResult.products),
         [initialResult.products],
     )
 
@@ -96,7 +71,7 @@ export default function Container({
     )
     const [selectedTags, setSelectedTags] = useState<string[]>(sanitizedInitialTags)
     const [selectedType, setSelectedType] = useState<string | null>(initialTypeId ?? null)
-    const [selectedWeight, setSelectedWeight] = useState<number | null>(null)
+    const [selectedWeight, setSelectedWeight] = useState<string | null>(null)
     const [maxPrice, setMaxPrice] = useState<number>(() =>
         clampPrice(initialMaxPrice, initialPriceBounds.max),
     )
@@ -137,7 +112,7 @@ export default function Container({
     })
 
     const fallbackPriceBounds = useMemo(
-        () => derivePriceBoundaries(result.products),
+        () => computePriceRangeFromProducts(result.products),
         [result.products],
     )
 
@@ -159,7 +134,7 @@ export default function Container({
     const categoriesToShow = useMemo(
         () =>
             (topLevel.length ? topLevel : categories).filter(
-                (category): category is StoreProductCategory => Boolean(category.id),
+                (category): category is HttpTypes.StoreProductCategory => Boolean(category.id),
             ),
         [topLevel, categories],
     )
@@ -175,7 +150,7 @@ export default function Container({
     const tagsToShow = useMemo(
         () =>
             tags.filter(
-                (tag): tag is StoreProductTag => Boolean(tag.id && (tag.value ?? "") !== ""),
+                (tag): tag is HttpTypes.StoreProductTag => Boolean(tag.id && (tag.value ?? "") !== ""),
             ),
         [tags],
     )
@@ -183,7 +158,7 @@ export default function Container({
     const typesToShow = useMemo(
         () =>
             types.filter(
-                (type): type is StoreProductType => Boolean(type.id && (type.value ?? "") !== ""),
+                (type): type is HttpTypes.StoreProductType => Boolean(type.id && (type.value ?? "") !== ""),
             ),
         [types],
     )
@@ -249,7 +224,7 @@ export default function Container({
         setSelectedWeight(null)
     }
 
-    const handleWeightSelect = (weight: number | null) => {
+    const handleWeightSelect = (weight: string | null) => {
         setSelectedWeight(weight)
     }
 
@@ -281,7 +256,10 @@ export default function Container({
     }
 
     const filteredProducts = useMemo(
-        () => result.products.filter((product) => getProductPriceInUnits(product) <= maxPrice),
+        () => result.products.filter((product) => {
+            const price = resolveProductPricing(product).price
+            return typeof price === "number" && price <= maxPrice
+        }),
         [result.products, maxPrice],
     )
 

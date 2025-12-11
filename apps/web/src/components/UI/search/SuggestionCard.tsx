@@ -1,6 +1,7 @@
 import { formatPrice } from "../../../lib/medusajs/products"
 import type { MeiliProductHit } from "../../../lib/meilisearch/types"
 import { parseMeiliPrice } from "../../../lib/meilisearch/types"
+import { FALLBACK_PRODUCT_IMAGE } from "../../../lib/utils/constants"
 
 interface Props {
     hit: MeiliProductHit
@@ -23,8 +24,6 @@ export function SuggestionSkeleton() {
         </div>
     )
 }
-
-const FALLBACK_IMAGE = "/images/product-placeholder.jpg"
 
 export default function SuggestionCard({ hit, onNavigate }: Props) {
     const title = hit.title ?? "Producto"
@@ -55,7 +54,7 @@ export default function SuggestionCard({ hit, onNavigate }: Props) {
     const mainPriceLabel = minPrice !== null ? formatPrice(minPrice) : null
 
     const destination = `/products/${hit.handle ?? hit.id ?? hit.objectID ?? ""}`
-    const thumbnail = hit.thumbnail || FALLBACK_IMAGE
+    const thumbnail = hit.thumbnail || FALLBACK_PRODUCT_IMAGE
 
     return (
         <a
