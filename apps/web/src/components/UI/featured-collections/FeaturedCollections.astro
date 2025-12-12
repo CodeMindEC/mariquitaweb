@@ -13,7 +13,7 @@ const { collections = [], sectionsLimit = 4, productsPerSection = 8 }: Props = A
 const filteredCollections = collections.filter((collection) => Boolean(collection?.id || collection?.handle)).slice(0, sectionsLimit);
 ---
 
-<section class="flex flex-col gap-8 py-8 sm:py-12">
+<section class="flex flex-col gap-8">
     <style>
         .card-section__slider {
             scrollbar-width: none;

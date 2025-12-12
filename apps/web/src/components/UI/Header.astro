@@ -68,7 +68,7 @@ const navLinks = [
 
     <nav class="w-full border-t border-border-muted bg-white">
         <div class="site-container flex flex-col md:flex-row items-stretch md:items-center justify-between py-3 gap-3">
-            <ul class="flex flex-wrap items-center justify-between gap-3 md:gap-6 text-lg font-semibold text-text-primary w-full">
+            <ul class="flex flex-wrap items-center justify-between gap-3 md:gap-6 text-sm font-semibold text-text-primary w-full">
                 <div class="flex flex-wrap items-center gap-3 md:gap-6">
                     {
                         navLinks.map((link) => (
@@ -105,7 +105,7 @@ const navLinks = [
                                     <p class="text-xs text-text-secondary">No hay colecciones disponibles.</p>
                                 ) : (
                                     <ul class="flex flex-col gap-1">
-                                        {servicesCollections.map((collection) => (
+                                        {servicesCollections.reverse().map((collection) => (
                                             <li>
                                                 <a href={`/catalog?collection_id=${collection.id ?? collection.handle}`} class="flex flex-col rounded-md px-3 py-2 hover:bg-surface-primary/40">
                                                     {typeof collection.metadata?.text === "string" && <span class="text-xs text-text-secondary/80">{collection.metadata.text as string}</span>}

@@ -1,3 +1,8 @@
+/* Utilidad para width personalizada del carousel */
+.w-site-max {
+  width: min(var(--site-max-width), 95vw);
+}
+
 @import "tailwindcss";
 
 @font-face {

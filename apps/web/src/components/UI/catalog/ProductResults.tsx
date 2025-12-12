@@ -32,7 +32,7 @@ export default function ProductResults({
     isRefining,
 }: ProductResultsProps) {
     return (
-        <section className="flex-1 flex flex-col gap-4 w-full overflow-x-hidden overflow-y-visible">
+        <section className="flex-1 flex flex-col gap-4 w-full">
             <div className="flex items-center justify-between px-4 sm:px-6">
                 <p className="text-base lg:text-lg font-semibold text-text-primary">
                     Productos ({totalProductsLabel})
@@ -47,7 +47,7 @@ export default function ProductResults({
                 )}
             </div>
 
-            <div className="relative min-h-80 w-full overflow-y-clip pb-10">
+            <div className="relative min-h-80 w-full pb-10">
                 {error ? (
                     <motion.div
                         key="error-state"
