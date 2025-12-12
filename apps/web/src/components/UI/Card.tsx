@@ -37,7 +37,7 @@ export default function Card({ product, children }: Props) {
     const action =
         children ??
         (viewModel.source === "store" ? (
-            <AddToCartButton product={viewModel.product} />
+            <AddToCartButton product={viewModel.product} variant={viewModel.defaultVariant} />
         ) : (
             <FallbackBuyButton />
         ))
@@ -58,9 +58,9 @@ export default function Card({ product, children }: Props) {
                         {viewModel.pricing.discountLabel}
                     </div>
                 )}
-                {viewModel.weightText && (
+                {viewModel.defaultVariant?.weight && (
                     <div className="absolute left-4 top-4 inline-flex items-center justify-center rounded-full bg-white/90 backdrop-blur-sm px-3 py-1.5 text-xs font-bold text-text-primary shadow-md border border-border-muted/30">
-                        {viewModel.weightText}
+                        {viewModel.defaultVariant?.weight}g
                     </div>
                 )}
                 <img

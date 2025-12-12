@@ -97,7 +97,7 @@ export default function ProductResults({
                                     transition={{ duration: 0.25, ease: "easeOut" }}
                                     style={{ width: "100%", willChange: "transform" }}
                                 >
-                                    <Card product={product} />
+                                    <Card product={product}  />
                                 </motion.div>
                             )
                         })}

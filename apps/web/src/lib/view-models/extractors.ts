@@ -27,6 +27,25 @@ export const extractCheapestWeight = (product: StoreProduct): number | null => {
     return minPriceWeight
 }
 
+export const extractCheapestVariant = (product: StoreProduct) => {
+    if (!product.variants?.length) return null
+
+    let minPrice = Infinity
+    let cheapestVariant: NonNullable<StoreProduct["variants"]>[number] | null = null
+
+    for (const variant of product.variants) {
+        const calculatedAmount = variant.calculated_price?.calculated_amount
+        const weight = variant.weight
+
+        if (typeof calculatedAmount === "number" && calculatedAmount < minPrice && weight) {
+            minPrice = calculatedAmount
+            cheapestVariant = variant
+        }
+    }
+
+    return cheapestVariant
+}
+
 /**
  * Extrae el ID del producto con fallback
  */
