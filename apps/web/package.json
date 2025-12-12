@@ -5,7 +5,7 @@
     "scripts": {
         "dev": "wait-on http://localhost:9000/app && astro dev",
         "build": "astro build",
-        "preview": "astro preview",
+        "start": "wait-on http://localhost:9000/app && astro preview",
         "astro": "astro",
         "fix": "node ./src/scripts/fix-imports.cjs"
     },
