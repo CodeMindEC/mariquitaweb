@@ -9,6 +9,7 @@ import { buildStorePricing, buildHitPricing, type PricingViewModel } from "./pri
 import { FALLBACK_PRODUCT_IMAGE } from "../utils/constants"
 import {
     extractCheapestWeight,
+    extractCheapestVariant,
     extractProductId,
     extractHighlightLabel,
     extractHitId,
@@ -31,6 +32,7 @@ export interface BaseCardViewModel {
     highlightLabel: string
     weightText: string | null
     pricing: PricingViewModel
+    defaultVariant?: NonNullable<StoreProduct["variants"]>[number]
 }
 
 /**
@@ -62,6 +64,7 @@ const isStoreProduct = (candidate: unknown): candidate is StoreProduct =>
  */
 const buildStoreViewModel = (product: StoreProduct): StoreCardViewModel => {
     const weight = extractCheapestWeight(product)
+    const cheapestVariant = extractCheapestVariant(product)
 
     return {
         source: "store",
@@ -71,6 +74,7 @@ const buildStoreViewModel = (product: StoreProduct): StoreCardViewModel => {
         highlightLabel: extractHighlightLabel(product, FALLBACK_COLLECTION),
         weightText: formatWeight(weight),
         pricing: buildStorePricing(product),
+        defaultVariant: cheapestVariant ?? undefined,
         product,
     }
 }

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { animate } from "motion";
 import { AnimatePresence, motion } from "motion/react";
-import { addItem } from "@stores/cart";
+import { addItem, buildCartItem } from "@stores/cart";
 import { resolveProductPricing } from "@lib/medusajs/pricing";
 import type { StoreProduct } from "@lib/medusajs/products";
 import { getProductThumbnail, getProductTitle } from "@lib/medusajs/products";
@@ -18,26 +18,34 @@ const SUCCESS_MESSAGES = [
 
 export default function AddToCartButton({
   product,
+  variant,
 }: {
   product: StoreProduct;
+  variant?: NonNullable<StoreProduct["variants"]>[number];
 }) {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
-  const confirmationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const confirmationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null
+  );
   const shouldReduceMotion = usePrefersReducedMotion();
   const pricing = resolveProductPricing(product);
-  const defaultVariant = product.variants?.[0];
-  const unitPrice = pricing?.price ?? 0;
+  const defaultVariant = variant;
+  const unitPrice = defaultVariant?.calculated_price?.calculated_amount ?? 0;
   const isUnavailable = !defaultVariant;
   const productTitle = getProductTitle(product);
   const productThumbnail = getProductThumbnail(product);
-  const [confirmationMessage, setConfirmationMessage] = useState<string | null>(null);
+  const [confirmationMessage, setConfirmationMessage] = useState<string | null>(
+    null
+  );
   const isConfirming = Boolean(confirmationMessage);
 
   const triggerFlyAnimation = useCallback(() => {
     if (typeof window === "undefined" || shouldReduceMotion) return;
 
     const button = buttonRef.current;
-    const cartTarget = document.querySelector<HTMLElement>("[data-cart-indicator]");
+    const cartTarget = document.querySelector<HTMLElement>(
+      "[data-cart-indicator]"
+    );
     if (!button || !cartTarget) return;
 
     const card = button.closest<HTMLElement>("[data-product-card]");
@@ -83,7 +91,7 @@ export default function AddToCartButton({
         duration: 0.85,
         ease: "easeInOut",
         times: [0, 0.55, 1],
-      },
+      }
     );
 
     animation.finished.finally(() => {
@@ -92,18 +100,20 @@ export default function AddToCartButton({
   }, [shouldReduceMotion]);
 
   const handleAdd = useCallback(() => {
-    if (!defaultVariant) {
-      console.warn("No hay variantes disponibles para el producto", product.id);
-      return;
-    }
+    if (!variant) return;
+
+    const item = buildCartItem(product);
+
+    // overwrite default variant with the user-selected one
+    const selectedVariant = item.variants?.find((v) => v.id === variant.id);
+
+    if (!selectedVariant) return;
 
     addItem({
-      product_id: product.id,
-      variant_id: defaultVariant.id,
-      title: productTitle,
-      thumbnail: productThumbnail,
-      quantity: 1,
-      unit_price: unitPrice,
+      ...item,
+      variant_id: selectedVariant.id,
+      weight: selectedVariant.weight,
+      unit_price: selectedVariant.price,
     });
 
     triggerFlyAnimation();
@@ -112,14 +122,22 @@ export default function AddToCartButton({
       clearTimeout(confirmationTimeoutRef.current);
     }
 
-    const randomMessage = SUCCESS_MESSAGES[Math.floor(Math.random() * SUCCESS_MESSAGES.length)];
+    const randomMessage =
+      SUCCESS_MESSAGES[Math.floor(Math.random() * SUCCESS_MESSAGES.length)];
     setConfirmationMessage(randomMessage);
 
     confirmationTimeoutRef.current = setTimeout(() => {
       setConfirmationMessage(null);
       confirmationTimeoutRef.current = null;
     }, 900);
-  }, [defaultVariant, product.id, productTitle, productThumbnail, unitPrice, triggerFlyAnimation]);
+  }, [
+    defaultVariant,
+    product.id,
+    productTitle,
+    productThumbnail,
+    unitPrice,
+    triggerFlyAnimation,
+  ]);
 
   useEffect(() => {
     return () => {
@@ -134,10 +152,11 @@ export default function AddToCartButton({
   return (
     <button
       ref={buttonRef}
-      className={`group relative mt-2 inline-flex w-full items-center justify-center gap-3 overflow-hidden rounded-2xl px-6 py-3 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-16 transition-all duration-150 ${isUnavailable
-        ? "cursor-not-allowed bg-gray-400/80"
-        : `cursor-pointer hover:scale-[1.02] hover:-translate-y-0.5 active:scale-[0.98] active:translate-y-0 ${isConfirming ? "bg-secondary scale-[1.02] shadow-[0_16px_32px_color-mix(in_srgb,var(--color-secondary)_55%,transparent)]" : "bg-primary hover:bg-secondary shadow-[0_8px_18px_color-mix(in_srgb,var(--color-primary)_35%,transparent)]"}`
-        }`}
+      className={`group relative mt-2 inline-flex w-full items-center justify-center gap-3 overflow-hidden rounded-2xl px-6 py-3 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-16 transition-all duration-150 ${
+        isUnavailable
+          ? "cursor-not-allowed bg-gray-400/80"
+          : `cursor-pointer hover:scale-[1.02] hover:-translate-y-0.5 active:scale-[0.98] active:translate-y-0 ${isConfirming ? "bg-secondary scale-[1.02] shadow-[0_16px_32px_color-mix(in_srgb,var(--color-secondary)_55%,transparent)]" : "bg-primary hover:bg-secondary shadow-[0_8px_18px_color-mix(in_srgb,var(--color-primary)_35%,transparent)]"}`
+      }`}
       disabled={isUnavailable}
       aria-disabled={isUnavailable}
       onClick={handleAdd}
@@ -173,7 +192,10 @@ function usePrefersReducedMotion() {
   const [prefers, setPrefers] = useState(false);
 
   useEffect(() => {
-    if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+    if (
+      typeof window === "undefined" ||
+      typeof window.matchMedia !== "function"
+    ) {
       return;
     }
 

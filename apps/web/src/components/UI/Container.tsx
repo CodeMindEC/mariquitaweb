@@ -279,7 +279,7 @@ export default function Container({
     const isRefining = loading && result.products.length > 0
 
     return (
-        <div className="site-container w-full overflow-x-hidden ">
+        <div className="site-container w-full ">
             <div className="w-full relative flex flex-col lg:flex-row gap-4 lg:gap-6 py-4 lg:py-5">
                 <div className="z-100 md:z-auto">
                     <FilterSidebar

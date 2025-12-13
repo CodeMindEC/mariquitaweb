@@ -20,7 +20,7 @@ export default function CartListIsland() {
       {items.map((item) => (
         <CartItem
           key={`${item.product_id}-${item.variant_id}`}
-          item={item}
+          item={item} 
         />
       ))}
     </div>
