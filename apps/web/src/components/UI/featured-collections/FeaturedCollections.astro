@@ -8,9 +8,15 @@ interface Props {
     productsPerSection?: number;
 }
 
-const { collections = [], sectionsLimit = 4, productsPerSection = 8 }: Props = Astro.props;
+const {
+    collections = [],
+    sectionsLimit = 4,
+    productsPerSection = 8,
+}: Props = Astro.props;
 
-const filteredCollections = collections.filter((collection) => Boolean(collection?.id || collection?.handle)).slice(0, sectionsLimit);
+const filteredCollections = collections
+    .filter((collection) => Boolean(collection?.id || collection?.handle))
+    .slice(0, sectionsLimit);
 ---
 
 <section class="flex flex-col gap-8 py-8 sm:py-12">
@@ -50,5 +56,20 @@ const filteredCollections = collections.filter((collection) => Boolean(collectio
         }
     </style>
 
-    {filteredCollections.length === 0 ? <div class="site-container rounded-xl border border-border-muted bg-surface-secondary/20 p-6 text-center text-sm text-text-secondary">No hay colecciones destacadas disponibles por ahora.</div> : filteredCollections.reverse().map((collection) => <CollectionSectionIsland collection={collection} productsPerSection={productsPerSection} />)}
+    {
+        filteredCollections.length === 0 ? (
+            <div class="site-container rounded-xl border border-border-muted bg-surface-secondary/20 p-6 text-center text-sm text-text-secondary">
+                No hay colecciones destacadas disponibles por ahora.
+            </div>
+        ) : (
+            filteredCollections
+                .reverse()
+                .map((collection) => (
+                    <CollectionSectionIsland
+                        collection={collection}
+                        productsPerSection={productsPerSection}
+                    />
+                ))
+        )
+    }
 </section>

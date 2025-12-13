@@ -1,0 +1,235 @@
+---
+import Layout from "../layouts/Layout.astro";
+import fondoimg from "../assets/aboutus/fondo.png";
+import mangoimg from "../assets/aboutus/mango.png";
+
+const processos = [
+    {
+        titulo: "Selección Premium",
+        descripcion:
+            "Inspeccionamos cada fruta con criterios rigurosos de frescura, madurez y calidad. Solo las mejores piezas avanzan en nuestro proceso.",
+    },
+    {
+        titulo: "Lavado y Desinfección",
+        descripcion:
+            "Lavado profundo y desinfección con estándares de seguridad alimentaria, eliminando impurezas y reduciendo la carga microbiana.",
+    },
+    {
+        titulo: "Corte Uniforme",
+        descripcion:
+            "Cortamos cada fruta en piezas uniformes que garantizan un deshidratado homogéneo y consistente en textura y sabor.",
+    },
+    {
+        titulo: "Tratamiento Especializado",
+        descripcion:
+            "Aplicamos tratamientos naturales para prevenir la oxidación y mantener los colores vibrantes, preservando la belleza natural de la fruta.",
+    },
+    {
+        titulo: "Deshidratación Controlada",
+        descripcion:
+            "En nuestros deshidratadores de última generación, controlamos temperatura y tiempo para concentrar sabores y nutrientes sin perder su esencia.",
+    },
+    {
+        titulo: "Enfriamiento y Control",
+        descripcion:
+            "Enfriamos gradualmente en ambiente controlado para estabilizar la humedad y garantizar la máxima durabilidad del producto.",
+    },
+    {
+        titulo: "Inspección Final",
+        descripcion:
+            "Cada pieza se evalúa meticulosamente para asegurar que cumple nuestros altos estándares de calidad antes de llegar a ti.",
+    },
+    {
+        titulo: "Envasado Protector",
+        descripcion:
+            "Empacamos en materiales herméticos que protegen de la humedad, luz y oxígeno, manteniendo la frescura y calidad del producto.",
+    },
+    {
+        titulo: "Almacenamiento Óptimo",
+        descripcion:
+            "Almacenamos en condiciones ideales de temperatura y humedad hasta que llegue el momento de entregarle un producto impecable.",
+    },
+];
+---
+
+<Layout>
+    <div class="w-full relative min-h-screen">
+        <!-- Imagen de fondo -->
+        <div class="absolute inset-0 w-full h-full">
+            <img
+                src={fondoimg.src}
+                alt="Sobre nosotros"
+                class="w-full h-full object-cover"
+            />
+        </div>
+
+        <!-- Contenido encima de la imagen -->
+        <div
+            class="relative z-10 w-full h-full flex flex-col lg:flex-row py-20 pr-20 pl-10 pb-20 gap-20 lg:gap-20"
+        >
+            <!-- Espacio vacío para el lado izquierdo -->
+            <div class="flex-1"></div>
+
+            <!-- Texto en el lado derecho -->
+            <div class="flex-1 flex flex-col justify-center">
+                <!-- Frase destacada -->
+                <span
+                    class="text-[#249b3e] font-extrabold text-5xl lg:text-6xl mb-8"
+                >
+                    LO NATURAL SE TRANSFORMA EN EXTRAORDINARIO.
+                </span>
+
+                <!-- Descripción -->
+                <div class="text-base leading-relaxed text-gray-700">
+                    En cada industria hay quienes están construyendo el futuro
+                    del sabor, la salud y la conveniencia. En los snacks
+                    naturales, somos nosotros. Fundada con pasión por la
+                    nutrición y la innovación, combinamos ciencia, naturaleza y
+                    tecnología para crear frutas deshidratadas para la próxima
+                    generación: sabores preservados, energía potenciada y
+                    bienestar reinventado.
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="w-full p-20">
+        <div
+            class="w-full flex flex-col justify-center items-center gap-10 max-w-4xl mx-auto"
+        >
+            <div class="w-fit">
+                <span
+                    class="text-[#249b3e] font-extrabold text-5xl lg:text-6xl mb-8 block"
+                >
+                    Cada bocado que ofrecemos nace de la fruta, del tiempo y de
+                    la dedicación
+                </span>
+            </div>
+            <div class="w-fit text-base leading-relaxed text-gray-700">
+                <span>
+                    La mayoría de los snacks nacen en una cocina o en una
+                    pequeña fábrica con una receta rápida. Los nuestros, en
+                    cambio, comienzan con la selección cuidadosa de la mejor
+                    fruta, secada lentamente para preservar su sabor, textura y
+                    nutrientes. Cada proceso es artesanal, pensado para entregar
+                    un snack que no solo sacia, sino que nutre, aporta energía y
+                    convierte un simple bocado en una experiencia saludable y
+                    deliciosa.
+                </span>
+            </div>
+        </div>
+    </div>
+    <div
+        class="w-full relative min-h-screen flex flex-col justify-center items-center"
+    >
+        <div class="absolute inset-0 w-full h-full">
+            <img
+                src={mangoimg.src}
+                alt="Sobre nosotros"
+                class="w-full h-full object-cover"
+            />
+        </div>
+
+        <!-- Contenedor con Misión y Visión -->
+        <div
+            class="relative z-10 w-full flex flex-col justify-center items-center gap-20 px-10 lg:px-20 py-20 -translate-y-48"
+        >
+            <div
+                class="grid grid-cols-1 lg:grid-cols-2 w-full max-w-5xl gap-20"
+            >
+                <!-- Misión -->
+                <div class="flex flex-col items-center lg:items-start gap-6">
+                    <h3
+                        class="text-[#249b3e] font-extrabold text-5xl lg:text-6xl"
+                    >
+                        NUESTRA MISIÓN
+                    </h3>
+                    <p
+                        class="text-base lg:text-lg leading-relaxed text-gray-800"
+                    >
+                        Mejorar la calidad de vida de nuestros consumidores
+                        ofreciendo opciones de snacks saludables, nutritivos y
+                        100% naturales, elaborados con frutas, vegetales y
+                        hortalizas deshidratadas de origen local y de manera
+                        responsable.
+                    </p>
+                </div>
+
+                <!-- Visión -->
+                <div class="flex flex-col items-center lg:items-start gap-6">
+                    <h3
+                        class="text-[#249b3e] font-extrabold text-5xl lg:text-6xl"
+                    >
+                        NUESTRA VISIÓN
+                    </h3>
+                    <p
+                        class="text-base lg:text-lg leading-relaxed text-gray-800"
+                    >
+                        Producir y comercializar frutas, vegetales y hortalizas
+                        deshidratadas de la más alta calidad, utilizando
+                        materias primas seleccionadas y procesos innovadores,
+                        para ofrecer a nuestros clientes un snack nutritivo,
+                        delicioso y conveniente.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección: Nuestro Proceso -->
+    <div
+        class="w-full py-20 px-10 lg:px-20 bg-linear-to-b from-white to-gray-50"
+    >
+        <div class="max-w-6xl mx-auto">
+            <!-- Título -->
+            <div class="text-center mb-16">
+                <span
+                    class="text-[#249b3e] font-extrabold text-5xl lg:text-6xl block mb-6"
+                >
+                    EXCELENCIA EN CADA PASO
+                </span>
+                <p class="text-lg text-gray-700 max-w-3xl mx-auto">
+                    Nuestro proceso de deshidratación es una combinación
+                    perfecta de tradición artesanal y tecnología de vanguardia,
+                    garantizando que cada fruta conserve su máximo potencial
+                    nutritivo y sabor.
+                </p>
+            </div>
+
+            <!-- Pasos del Proceso -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {
+                    processos.map((paso, index) => (
+                        <div class="bg-white rounded-lg p-8 shadow-md hover:shadow-lg transition-shadow">
+                            <div class="flex items-center gap-4 mb-6">
+                                <div class="w-12 h-12 rounded-full bg-[#249b3e] flex items-center justify-center text-white font-bold text-lg">
+                                    {index + 1}
+                                </div>
+                                <h4 class="text-[#249b3e] font-extrabold text-xl">
+                                    {paso.titulo}
+                                </h4>
+                            </div>
+                            <p class="text-gray-700 leading-relaxed">
+                                {paso.descripcion}
+                            </p>
+                        </div>
+                    ))
+                }
+            </div>
+
+            <!-- Conclusión -->
+            <div
+                class="mt-16 bg-[#249b3e]/5 rounded-lg p-10 border-l-4 border-[#249b3e]"
+            >
+                <p class="text-gray-800 text-lg leading-relaxed">
+                    Desde la selección de la mejor materia prima hasta el
+                    envasado final, cada etapa de nuestro proceso está diseñada
+                    con un propósito: llevarte frutas deshidratadas que no solo
+                    sean deliciosas, sino que también retengan toda su potencia
+                    nutricional. Es por eso que cada bocado que probas es un
+                    testamento de nuestro compromiso con la calidad y tu
+                    bienestar.
+                </p>
+            </div>
+        </div>
+    </div>
+</Layout>
